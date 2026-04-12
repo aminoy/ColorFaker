@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1208;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply relative w-full max-w-md mx-auto bg-[#0f0c07] overflow-hidden;
+    height: 100dvh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen-content {
+    @apply flex-1 overflow-y-auto overflow-x-hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .gold-gradient {
+    background: linear-gradient(135deg, #d4a017, #f0cb4e, #d4a017);
+  }
+
+  .dark-gradient {
+    background: linear-gradient(180deg, #1a1208 0%, #0f0c07 100%);
+  }
+
+  .card-glass {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(212,160,23,0.15);
+  }
+
+  .card-gold-border {
+    border: 1px solid rgba(212,160,23,0.3);
+  }
+
+  .text-gold {
+    color: #d4a017;
+  }
+
+  .bg-gold {
+    background-color: #d4a017;
+  }
+
+  .btn-gold {
+    @apply bg-gold-500 text-haram-dark font-semibold rounded-xl px-6 py-3
+           active:scale-95 transition-all duration-150 shadow-lg;
+    box-shadow: 0 4px 20px rgba(212,160,23,0.3);
+  }
+
+  .btn-outline-gold {
+    @apply border border-gold-500 text-gold-400 font-semibold rounded-xl px-6 py-3
+           active:scale-95 transition-all duration-150;
+  }
+
+  .section-title {
+    @apply text-white font-semibold text-lg mb-4;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .nav-icon-label {
+    @apply text-[10px] mt-1 font-medium tracking-wide;
+  }
+}
+
+/* Custom scrollbar */
+.screen-content::-webkit-scrollbar { display: none; }
+.screen-content { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Slide transitions */
+.slide-up-enter {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-up-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 300ms ease-out;
+}
+.slide-up-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+.slide-up-exit-active {
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: all 200ms ease-in;
+}
+
+/* Shimmer animation for loading */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(212,160,23,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Prayer dot pulse */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,160,23,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(212,160,23,0); }
+}
+.pulse-gold {
+  animation: pulse-gold 2s infinite;
+}
