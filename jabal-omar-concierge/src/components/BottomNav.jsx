@@ -2,21 +2,21 @@ import React from 'react'
 import { Home, Building2, UtensilsCrossed, ShoppingBag, Star, Settings } from 'lucide-react'
 
 const tabs = [
-  { id: 'home',        icon: Home,            label: 'Home',       labelAr: 'الرئيسية' },
-  { id: 'hotels',      icon: Building2,        label: 'Hotels',     labelAr: 'الفنادق'  },
-  { id: 'dining',      icon: UtensilsCrossed,  label: 'Dining',     labelAr: 'مطاعم'    },
-  { id: 'shopping',    icon: ShoppingBag,      label: 'Shopping',   labelAr: 'تسوق'     },
-  { id: 'experiences', icon: Star,             label: 'Explore',    labelAr: 'استكشف'   },
-  { id: 'profile',     icon: Settings,         label: 'More',       labelAr: 'المزيد'   },
+  { id: 'home',        icon: Home,            label: 'Home',     labelAr: 'الرئيسية' },
+  { id: 'hotels',      icon: Building2,        label: 'Hotels',   labelAr: 'الفنادق'  },
+  { id: 'dining',      icon: UtensilsCrossed,  label: 'Dining',   labelAr: 'مطاعم'    },
+  { id: 'shopping',    icon: ShoppingBag,      label: 'Shopping', labelAr: 'تسوق'     },
+  { id: 'experiences', icon: Star,             label: 'Explore',  labelAr: 'استكشف'   },
+  { id: 'profile',     icon: Settings,         label: 'More',     labelAr: 'المزيد'   },
 ]
 
 export default function BottomNav({ current, navigate, lang }) {
   return (
     <nav
-      className="flex-shrink-0 border-t"
+      className="flex-shrink-0 border-t transition-colors duration-300"
       style={{
-        background: 'linear-gradient(0deg,#1a1208 0%,#0f0c07 100%)',
-        borderColor: 'rgba(212,160,23,0.2)',
+        background: 'var(--bg-nav)',
+        borderColor: 'var(--border-card)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
@@ -38,13 +38,13 @@ export default function BottomNav({ current, navigate, lang }) {
               >
                 <Icon
                   size={20}
-                  style={{ color: active ? '#d4a017' : 'rgba(255,255,255,0.4)' }}
+                  style={{ color: active ? 'var(--gold)' : 'var(--text-3)' }}
                   strokeWidth={active ? 2.5 : 1.8}
                 />
               </div>
               <span
-                className="nav-icon-label"
-                style={{ color: active ? '#d4a017' : 'rgba(255,255,255,0.35)' }}
+                className="nav-icon-label transition-colors duration-300"
+                style={{ color: active ? 'var(--gold)' : 'var(--text-3)' }}
               >
                 {lang === 'ar' ? labelAr : label}
               </span>

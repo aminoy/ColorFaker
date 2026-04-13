@@ -61,7 +61,7 @@ export default function HomeScreen({ lang, setLang, navigate }) {
   const nextPrayer = PRAYER_TIMES.find(p => p.next)
 
   return (
-    <div className="min-h-full" style={{ background: 'linear-gradient(180deg,#1a1208 0%,#0f0c07 30%)' }}>
+    <div className="min-h-full screen-bg">
       {/* Hero Header */}
       <div
         className="relative px-4 pt-12 pb-6"

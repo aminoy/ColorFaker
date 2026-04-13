@@ -8,7 +8,7 @@ export default function HotelDetailScreen({ lang, navigate, detail }) {
     return null
   }
   return (
-    <div className="min-h-full" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full screen-bg">
       <div className="px-4 pt-12">
         <button onClick={() => navigate('hotels')} className="flex items-center gap-2">
           <ArrowLeft size={16} className="text-gold-400" />

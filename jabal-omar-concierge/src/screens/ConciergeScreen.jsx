@@ -58,7 +58,7 @@ export default function ConciergeScreen({ lang, navigate }) {
   }
 
   return (
-    <div className="min-h-full flex flex-col" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full flex flex-col screen-bg">
       {/* Header */}
       <div
         className="px-4 pt-12 pb-4 flex items-center gap-3 flex-shrink-0"

@@ -16,10 +16,16 @@ import HotelDetailScreen from './screens/HotelDetailScreen'
 import NotificationsScreen from './screens/NotificationsScreen'
 
 export default function App() {
-  const [splash, setSplash]     = useState(true)
-  const [screen, setScreen]     = useState('home')
-  const [lang, setLang]         = useState('en')   // 'en' | 'ar'
-  const [detail, setDetail]     = useState(null)   // detail payload for sub-screens
+  const [splash, setSplash]       = useState(true)
+  const [screen, setScreen]       = useState('home')
+  const [lang, setLang]           = useState('en')       // 'en' | 'ar'
+  const [detail, setDetail]       = useState(null)
+  const [darkMode, setDarkMode]   = useState(true)       // true = dark, false = light
+
+  // Apply theme to <html> so CSS selectors work globally
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light')
+  }, [darkMode])
 
   useEffect(() => {
     const t = setTimeout(() => setSplash(false), 3200)
@@ -32,7 +38,7 @@ export default function App() {
     window.scrollTo?.(0, 0)
   }
 
-  const ctx = { lang, setLang, navigate, detail }
+  const ctx = { lang, setLang, navigate, detail, darkMode, setDarkMode }
 
   if (splash) return <SplashScreen />
 
@@ -40,7 +46,7 @@ export default function App() {
   const showNav = !noNav.includes(screen)
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${darkMode ? '' : ' light-mode'}`}>
       <div className="screen-content">
         {screen === 'home'          && <HomeScreen       {...ctx} />}
         {screen === 'hotels'        && <HotelsScreen     {...ctx} />}

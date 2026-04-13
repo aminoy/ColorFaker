@@ -31,13 +31,11 @@ const MENU_ITEMS = [
   },
 ]
 
-export default function ProfileScreen({ lang, setLang, navigate }) {
-  const [toggles, setToggles] = useState({ Notifications: true, 'Dark Mode': true })
-
-  const flip = (label) => setToggles(t => ({ ...t, [label]: !t[label] }))
+export default function ProfileScreen({ lang, setLang, navigate, darkMode, setDarkMode }) {
+  const [notifOn, setNotifOn] = useState(true)
 
   return (
-    <div className="min-h-full pb-6" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full pb-6 screen-bg">
       <div className="px-4 pt-12 pb-6">
         <h1 className="text-white text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
           {lang === 'ar' ? 'الملف الشخصي' : 'Profile & Settings'}
@@ -92,9 +90,10 @@ export default function ProfileScreen({ lang, setLang, navigate }) {
                 <button
                   key={item.label}
                   onClick={() => {
-                    if (item.label === 'Language') { setLang(l => l === 'en' ? 'ar' : 'en'); return }
-                    if (item.label === 'Concierge Chat') { navigate('concierge'); return }
-                    if (item.toggle) flip(item.label)
+                    if (item.label === 'Language')      { setLang(l => l === 'en' ? 'ar' : 'en'); return }
+                    if (item.label === 'Concierge Chat'){ navigate('concierge'); return }
+                    if (item.label === 'Dark Mode')     { setDarkMode(d => !d); return }
+                    if (item.label === 'Notifications') { setNotifOn(n => !n); return }
                   }}
                   className="w-full flex items-center gap-3 rounded-2xl p-3.5 active:scale-98 transition-all card-glass card-gold-border"
                 >
@@ -111,20 +110,20 @@ export default function ProfileScreen({ lang, setLang, navigate }) {
                     )}
                   </span>
                   {item.toggle && item.label !== 'Language'
-                    ? (
-                      <div
-                        className="w-10 h-5.5 rounded-full transition-all flex items-center px-0.5"
-                        style={{
-                          background: toggles[item.label] ? item.color : 'rgba(255,255,255,0.1)',
-                          width: 40, height: 22,
-                        }}
-                      >
-                        <div
-                          className="w-4 h-4 rounded-full bg-white shadow transition-all"
-                          style={{ transform: `translateX(${toggles[item.label] ? 18 : 0}px)` }}
-                        />
-                      </div>
-                    )
+                    ? (() => {
+                        const on = item.label === 'Dark Mode' ? darkMode : notifOn
+                        return (
+                          <div
+                            className="rounded-full flex items-center px-0.5 transition-all duration-300"
+                            style={{ background: on ? item.color : 'rgba(128,128,128,0.3)', width: 40, height: 22 }}
+                          >
+                            <div
+                              className="w-4 h-4 rounded-full bg-white shadow transition-all duration-300"
+                              style={{ transform: `translateX(${on ? 18 : 0}px)` }}
+                            />
+                          </div>
+                        )
+                      })()
                     : <ChevronRight size={14} className="text-white/20" />
                   }
                 </button>

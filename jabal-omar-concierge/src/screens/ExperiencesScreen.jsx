@@ -90,7 +90,7 @@ export default function ExperiencesScreen({ lang, navigate }) {
   if (selected) {
     const e = selected
     return (
-      <div className="min-h-full pb-6" style={{ background: '#0f0c07' }}>
+      <div className="min-h-full pb-6 screen-bg">
         <div className={`relative h-56 bg-gradient-to-br ${e.gradient} flex flex-col items-center justify-center`}>
           <span className="text-6xl mb-2">{e.icon}</span>
           <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg,rgba(15,12,7,1) 0%,transparent 50%)' }} />
@@ -158,7 +158,7 @@ export default function ExperiencesScreen({ lang, navigate }) {
   }
 
   return (
-    <div className="min-h-full pb-6" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full pb-6 screen-bg">
       <div className="px-4 pt-12 pb-4">
         <button onClick={() => navigate('home')} className="flex items-center gap-2 mb-4">
           <ArrowLeft size={16} className="text-gold-400" />

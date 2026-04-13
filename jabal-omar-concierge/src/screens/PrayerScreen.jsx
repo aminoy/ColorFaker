@@ -97,7 +97,7 @@ export default function PrayerScreen({ lang, navigate }) {
   const nextId = getNextPrayer()
 
   return (
-    <div className="min-h-full pb-6" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full pb-6 screen-bg">
       <div className="px-4 pt-12 pb-4">
         <button onClick={() => navigate('home')} className="flex items-center gap-2 mb-4">
           <ArrowLeft size={16} className="text-gold-400" />

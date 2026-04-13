@@ -38,15 +38,45 @@ const JumeirahLogo = () => (
     <text x="8" y="27" fontFamily="serif" fontSize="14" fontWeight="bold" fill="#ffffff" letterSpacing="1">JUMEIRAH</text>
   </svg>
 )
+const ConradLogo = () => (
+  <svg viewBox="0 0 120 40" width="90" height="30" fill="none">
+    <rect width="120" height="40" rx="4" fill="#0f4c81"/>
+    <text x="8" y="27" fontFamily="serif" fontSize="16" fontWeight="bold" fill="#ffffff" letterSpacing="1.5">CONRAD</text>
+  </svg>
+)
+const HiltonHCLogo = () => (
+  <svg viewBox="0 0 120 40" width="90" height="30" fill="none">
+    <rect width="120" height="40" rx="4" fill="#003580"/>
+    <text x="8" y="22" fontFamily="serif" fontSize="14" fontWeight="bold" fill="#ffffff" letterSpacing="1">HILTON</text>
+    <text x="8" y="34" fontFamily="sans-serif" fontSize="7" fill="#7ab3e0" letterSpacing="0.3">HOTEL &amp; CONVENTION</text>
+  </svg>
+)
+const RotanaLogo = () => (
+  <svg viewBox="0 0 120 40" width="90" height="30" fill="none">
+    <rect width="120" height="40" rx="4" fill="#1a0a2e"/>
+    <text x="8" y="27" fontFamily="serif" fontSize="16" fontWeight="bold" fill="#c084fc" letterSpacing="1">ROTANA</text>
+  </svg>
+)
+const DoubleTreeLogo = () => (
+  <svg viewBox="0 0 120 40" width="90" height="30" fill="none">
+    <rect width="120" height="40" rx="4" fill="#1a0800"/>
+    <text x="8" y="20" fontFamily="sans-serif" fontSize="8" fontWeight="bold" fill="#f97316" letterSpacing="0.3">DOUBLETREE BY</text>
+    <text x="8" y="33" fontFamily="serif" fontSize="13" fontWeight="bold" fill="#ffffff" letterSpacing="0.5">HILTON</text>
+  </svg>
+)
 
 /* ─── Hotel image placeholders (styled SVG banners) ─── */
 const HotelBanner = ({ hotel }) => {
   const configs = {
-    hyatt:    { bg: 'from-[#1a3a5c] to-[#0d2238]', accent: '#d4a017', text: 'HYATT REGENCY',      sub: 'JABAL OMAR MAKKAH',    emoji: '🏙️' },
-    marriott: { bg: 'from-[#6b0000] to-[#3d0000]', accent: '#f59e0b', text: 'MARRIOTT',            sub: 'JABAL OMAR MAKKAH',    emoji: '🏩' },
-    address:  { bg: 'from-[#111111] to-[#2a2a2a]', accent: '#d4a017', text: 'ADDRESS',             sub: 'JABAL OMAR MAKKAH',    emoji: '🌟' },
-    hilton:   { bg: 'from-[#003580] to-[#001f4d]', accent: '#7ab3e0', text: 'HILTON SUITES',       sub: 'JABAL OMAR MAKKAH',    emoji: '🏨' },
-    jumeirah: { bg: 'from-[#0d3349] to-[#071e2e]', accent: '#34d399', text: 'JUMEIRAH',            sub: 'JABAL OMAR MAKKAH',    emoji: '🏰' },
+    hyatt:      { bg: 'from-[#1a3a5c] to-[#0d2238]', accent: '#d4a017', text: 'HYATT REGENCY',        sub: 'JABAL OMAR MAKKAH', emoji: '🏙️' },
+    marriott:   { bg: 'from-[#6b0000] to-[#3d0000]', accent: '#f59e0b', text: 'MARRIOTT',              sub: 'JABAL OMAR MAKKAH', emoji: '🏩' },
+    address:    { bg: 'from-[#111111] to-[#2a2a2a]', accent: '#d4a017', text: 'ADDRESS',               sub: 'JABAL OMAR MAKKAH', emoji: '🌟' },
+    hilton:     { bg: 'from-[#003580] to-[#001f4d]', accent: '#7ab3e0', text: 'HILTON SUITES',         sub: 'JABAL OMAR MAKKAH', emoji: '🏨' },
+    jumeirah:   { bg: 'from-[#0d3349] to-[#071e2e]', accent: '#34d399', text: 'JUMEIRAH',              sub: 'JABAL OMAR MAKKAH', emoji: '🏰' },
+    conrad:     { bg: 'from-[#0f4c81] to-[#072d52]', accent: '#93c5fd', text: 'CONRAD',                sub: 'JABAL OMAR MAKKAH', emoji: '🏛️' },
+    hiltonhc:   { bg: 'from-[#003580] to-[#001a40]', accent: '#60a5fa', text: 'HILTON',                sub: 'HOTEL & CONVENTION', emoji: '🎪' },
+    rotana:     { bg: 'from-[#2e1065] to-[#1a0a3e]', accent: '#c084fc', text: 'ROTANA',                sub: 'JABAL OMAR MAKKAH', emoji: '🏯' },
+    doubletree: { bg: 'from-[#431407] to-[#1c0a02]', accent: '#fb923c', text: 'DOUBLETREE',            sub: 'BY HILTON',         emoji: '🌳' },
   }
   const c = configs[hotel.id]
   return (
@@ -268,12 +298,170 @@ const HOTELS = [
     color: '#10b981',
     Logo: JumeirahLogo,
   },
+  {
+    id: 'conrad',
+    name: 'Conrad Jabal Omar Makkah',
+    nameAr: 'كونراد جبل عمر مكة',
+    brand: 'Conrad Hotels',           brandAr: 'كونراد هوتيلز',
+    stars: 5,
+    tagline: 'Facing King Fahad Gate • 4 signature restaurants',
+    taglineAr: 'مقابل باب الملك فهد • ٤ مطاعم مميزة',
+    desc: 'Luxury Conrad hotel directly facing the King Fahad Haram Gate with 438 elegantly appointed rooms. Four distinct restaurants and a dedicated concierge team delivering world-class hospitality steps from the Grand Mosque.',
+    descAr: 'فندق كونراد الفاخر مقابل باب الملك فهد بالحرام الشريف، يضم ٤٣٨ غرفة أنيقة. أربعة مطاعم متنوعة وفريق كونسيرج متخصص لتقديم أرقى مستويات الضيافة على بُعد خطوات من الحرام.',
+    distance: '5 min walk',           distanceAr: '٥ دقائق مشياً',
+    distanceFt: '~0.3 km',
+    checkin: '3:00 PM',               checkout: '12:00 PM',
+    floors: 26,
+    rooms: 438,                       suites: 0,
+    villas: 0,                        penthouses: 0,
+    phone: '+966 12 526 7700',
+    roomSizeMin: 36,                  roomSizeMax: 450,
+    restaurants: [
+      { name: 'Al Mearaj',            type: 'Rooftop Arabic' },
+      { name: 'Prime',                type: 'International Steakhouse' },
+      { name: 'Al Kawthar',           type: 'All-Day International Buffet' },
+      { name: 'Al Helal',             type: 'Café & Light Bites' },
+    ],
+    amenities: [
+      'Free Wi-Fi', 'King Fahad Gate view', 'Fitness Centre',
+      'Business Centre', 'Prayer Hall', 'Concierge',
+      '24h Room Service', 'Valet Parking',
+    ],
+    amenitiesAr: [
+      'واي فاي مجاني', 'إطلالة باب الملك فهد', 'مركز لياقة',
+      'مركز أعمال', 'مصلى', 'كونسيرج',
+      'خدمة غرف ٢٤ س', 'صف سيارات',
+    ],
+    highlights: ['Facing King Fahad Gate', '4 themed restaurants', 'Rooftop Al Mearaj', '5-star Conrad service'],
+    highlightsAr: ['مقابل باب الملك فهد', '٤ مطاعم متنوعة', 'مطعم المعراج على السطح', 'خدمة كونراد ٥ نجوم'],
+    rating: 4.8,
+    ratingCount: '2,100+',
+    color: '#3b82f6',
+    Logo: ConradLogo,
+  },
+  {
+    id: 'hiltonhc',
+    name: 'Hilton Makkah Convention Hotel',
+    nameAr: 'هيلتون مكة للاجتماعات',
+    brand: 'Hilton',                  brandAr: 'هيلتون',
+    stars: 5,
+    tagline: 'Largest pillar-free ballroom • 1,969 ft from Haram',
+    taglineAr: 'أكبر قاعة احتفالات بلا أعمدة • ٦٠٠م من الحرام',
+    desc: '764-room full-service hotel with the region\'s largest pillar-free ballroom, ideal for conferences and events. Four restaurants and direct connectivity to Jabal Omar complex, just 3-4 minutes from the Grand Mosque.',
+    descAr: 'فندق خدمات كاملة من ٧٦٤ غرفة يضم أكبر قاعة احتفالات بلا أعمدة في المنطقة، مثالي للمؤتمرات والفعاليات. أربعة مطاعم واتصال مباشر بمجمع جبل عمر، على بُعد ٣-٤ دقائق من الحرام.',
+    distance: '3-4 min walk',         distanceAr: '٣-٤ دقائق مشياً',
+    distanceFt: '1,969 ft',
+    checkin: '3:00 PM',               checkout: '12:00 PM',
+    floors: 35,
+    rooms: 764,                       suites: 0,
+    villas: 0,                        penthouses: 0,
+    phone: '+966 12 526 0000',
+    roomSizeMin: 32,                  roomSizeMax: 380,
+    restaurants: [
+      { name: 'Al Maeda',             type: 'International Buffet' },
+      { name: 'AZURE',                type: 'Fine Dining' },
+      { name: 'SAHTEIN',              type: 'Arabic Grill' },
+      { name: 'Al Multaqa',           type: 'Lobby Café & Lounge' },
+    ],
+    amenities: [
+      'Free Wi-Fi', 'Pillar-Free Ballroom', 'Business Centre',
+      'Fitness Centre', 'Prayer Hall', '12 Meeting Rooms',
+      '24h Room Service', 'Concierge', 'Valet Parking',
+    ],
+    amenitiesAr: [
+      'واي فاي مجاني', 'قاعة بلا أعمدة', 'مركز أعمال',
+      'مركز لياقة', 'مصلى', '١٢ قاعة اجتماعات',
+      'خدمة غرف ٢٤ س', 'كونسيرج', 'صف سيارات',
+    ],
+    highlights: ["Region's largest pillar-free ballroom", '764 rooms', '4 restaurants', 'Convention-ready facilities'],
+    highlightsAr: ['أكبر قاعة بلا أعمدة بالمنطقة', '٧٦٤ غرفة', '٤ مطاعم', 'مرافق مؤتمرات متكاملة'],
+    color: '#0284c7',
+    Logo: HiltonHCLogo,
+  },
+  {
+    id: 'rotana',
+    name: 'Jabal Omar Rotana',
+    nameAr: 'جبل عمر روتانا',
+    brand: 'Rotana Hotels',           brandAr: 'روتانا هوتيلز',
+    stars: 5,
+    tagline: '3 towers • Escalator to Haram • 5 restaurants',
+    taglineAr: '٣ أبراج • سلّم كهربائي للحرام • ٥ مطاعم',
+    desc: 'Three elegant towers housing 655 rooms with a unique escalator link to the Haram, making it the most seamlessly connected property in the Jabal Omar complex. Five diverse restaurants and comprehensive leisure facilities.',
+    descAr: 'ثلاثة أبراج أنيقة تضم ٦٥٥ غرفة مع سلم كهربائي يصل مباشرة إلى الحرام، مما يجعله الفندق الأكثر اتصالاً في مجمع جبل عمر. خمسة مطاعم متنوعة ومرافق ترفيهية شاملة.',
+    distance: '3rd ring / escalator',  distanceAr: 'الخط الثالث / سلّم كهربائي',
+    distanceFt: '~0.4 km',
+    checkin: '3:00 PM',               checkout: '12:00 PM',
+    floors: 25,
+    rooms: 655,                       suites: 0,
+    villas: 0,                        penthouses: 0,
+    phone: '+966 12 553 8400',
+    roomSizeMin: 34,                  roomSizeMax: 400,
+    restaurants: [
+      { name: 'Al Rayan',             type: 'International All-Day Dining' },
+      { name: 'Salsabeel',            type: 'Lebanese & Mediterranean' },
+      { name: 'Tasneem',              type: 'All-Day Buffet' },
+      { name: 'Al Riwaq',             type: 'Poolside Terrace' },
+      { name: 'Rose Café',            type: 'Specialty Coffee & Pastries' },
+    ],
+    amenities: [
+      'Free Wi-Fi', 'Escalator to Haram', 'Fitness Centre',
+      '3 Connected Towers', 'Prayer Hall', 'Business Centre',
+      'Kids Club', 'Concierge', 'Valet Parking',
+    ],
+    amenitiesAr: [
+      'واي فاي مجاني', 'سلم كهربائي للحرام', 'مركز لياقة',
+      '٣ أبراج متصلة', 'مصلى', 'مركز أعمال',
+      'نادي أطفال', 'كونسيرج', 'صف سيارات',
+    ],
+    highlights: ['Escalator link to Haram', '3 connected towers', '5 restaurants', 'Complimentary shuttle'],
+    highlightsAr: ['سلم كهربائي للحرام', '٣ أبراج متصلة', '٥ مطاعم', 'مكوك مجاني'],
+    color: '#9333ea',
+    Logo: RotanaLogo,
+  },
+  {
+    id: 'doubletree',
+    name: 'DoubleTree by Hilton Makkah Jabal Omar',
+    nameAr: 'دبل تري باي هيلتون مكة جبل عمر',
+    brand: 'DoubleTree by Hilton',    brandAr: 'دبل تري باي هيلتون',
+    stars: 5,
+    tagline: '426 rooms • 3 restaurants • Free signature cookie',
+    taglineAr: '٤٢٦ غرفة • ٣ مطاعم • كوكيز ترحيبية مجانية',
+    desc: '426 well-appointed rooms offering a warm DoubleTree welcome with the iconic chocolate chip cookie. Three distinct dining venues including Italian, Indian, and an all-day café, with comprehensive services for Haj and Umrah pilgrims.',
+    descAr: '٤٢٦ غرفة مريحة تقدم ترحيباً دافئاً بأسلوب دبل تري مع الكوكيز الشهيرة. ثلاثة مطاعم متنوعة تشمل إيطالي وهندي وكافيه طوال اليوم، مع خدمات شاملة لحجاج وزوار البيت الحرام.',
+    distance: '5-10 min walk',        distanceAr: '٥-١٠ دقائق مشياً',
+    distanceFt: '800-1,000 m',
+    checkin: '3:00 PM',               checkout: '12:00 PM',
+    floors: 25,
+    rooms: 426,                       suites: 0,
+    villas: 0,                        penthouses: 0,
+    phone: '+966 12 556 0700',
+    roomSizeMin: 28,                  roomSizeMax: 300,
+    restaurants: [
+      { name: 'Balsamic',             type: 'Italian & International' },
+      { name: 'Zafaran',              type: 'Indian Cuisine' },
+      { name: 'Fayrouz Café',         type: 'All-Day Dining & Coffee' },
+    ],
+    amenities: [
+      'Free Wi-Fi', 'Signature Chocolate Cookie', 'Fitness Centre',
+      'Prayer Hall', 'Business Centre', 'Concierge',
+      'Haj & Umrah Services', '24h Room Service',
+    ],
+    amenitiesAr: [
+      'واي فاي مجاني', 'كوكيز الترحيب الشهيرة', 'مركز لياقة',
+      'مصلى', 'مركز أعمال', 'كونسيرج',
+      'خدمات الحج والعمرة', 'خدمة غرف ٢٤ س',
+    ],
+    highlights: ['Iconic welcome cookie tradition', '3 themed restaurants', 'Haj & Umrah services', 'Hilton Honors points'],
+    highlightsAr: ['تقليد الكوكيز الترحيبية', '٣ مطاعم متنوعة', 'خدمات الحج والعمرة', 'نقاط هيلتون أونرز'],
+    color: '#f97316',
+    Logo: DoubleTreeLogo,
+  },
 ]
 
 /* ─── Detail view ─── */
 function HotelDetail({ h, lang, onBack }) {
   return (
-    <div className="min-h-full pb-8" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full pb-8 screen-bg">
       {/* Hero banner */}
       <div className="relative">
         <HotelBanner hotel={h} />
@@ -434,7 +622,7 @@ export default function HotelsScreen({ lang, navigate }) {
   }
 
   return (
-    <div className="min-h-full pb-6" style={{ background: '#0f0c07' }}>
+    <div className="min-h-full pb-6 screen-bg">
       {/* Header */}
       <div className="px-4 pt-12 pb-4">
         <button onClick={() => navigate('home')} className="flex items-center gap-2 mb-4">
@@ -445,7 +633,7 @@ export default function HotelsScreen({ lang, navigate }) {
           {lang === 'ar' ? 'فنادق جبل عمر' : 'Jabal Omar Hotels'}
         </h1>
         <p className="text-white/40 text-sm mt-1">
-          {lang === 'ar' ? '٥ فنادق فاخرة — ٣,١٢٩+ وحدة بالقرب من الحرام الشريف' : '5 luxury hotels — 3,129+ keys near Al-Masjid Al-Haram'}
+          {lang === 'ar' ? '٩ فنادق فاخرة — ٦,٧٠٠+ وحدة بالقرب من الحرام الشريف' : '9 luxury hotels — 6,700+ keys near Al-Masjid Al-Haram'}
         </p>
       </div>
 

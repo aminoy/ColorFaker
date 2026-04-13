@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS custom properties (dark default) ── */
+:root {
+  --bg-screen:    #0f0c07;
+  --bg-app:       #1a1208;
+  --bg-card:      rgba(255,255,255,0.04);
+  --bg-card2:     rgba(255,255,255,0.06);
+  --bg-nav:       #1a1208;
+  --text-1:       #ffffff;
+  --text-2:       rgba(255,255,255,0.6);
+  --text-3:       rgba(255,255,255,0.4);
+  --text-4:       rgba(255,255,255,0.25);
+  --border-card:  rgba(212,160,23,0.2);
+  --border-card2: rgba(212,160,23,0.3);
+  --gold:         #d4a017;
+  --transition:   background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ── Light mode overrides ── */
+[data-theme="light"] {
+  --bg-screen:    #faf6ed;
+  --bg-app:       #f0e8d5;
+  --bg-card:      rgba(255,255,255,0.75);
+  --bg-card2:     rgba(255,255,255,0.9);
+  --bg-nav:       #f0e8d5;
+  --text-1:       #1a0e00;
+  --text-2:       rgba(26,14,0,0.65);
+  --text-3:       rgba(26,14,0,0.45);
+  --text-4:       rgba(26,14,0,0.3);
+  --border-card:  rgba(180,130,10,0.25);
+  --border-card2: rgba(180,130,10,0.35);
+  --gold:         #a07010;
+}
+
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;
@@ -12,25 +45,35 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #1a1208;
+    background-color: var(--bg-app);
     font-family: 'Inter', sans-serif;
     overflow: hidden;
+    transition: var(--transition);
   }
 }
 
 @layer components {
   .app-shell {
-    @apply relative w-full max-w-md mx-auto bg-[#0f0c07] overflow-hidden;
+    @apply relative w-full max-w-md mx-auto overflow-hidden;
+    background: var(--bg-screen);
     height: 100dvh;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: var(--transition);
   }
 
   .screen-content {
     @apply flex-1 overflow-y-auto overflow-x-hidden;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+  }
+
+  /* Screen background — all screens use this class */
+  .screen-bg {
+    background: var(--bg-screen);
+    min-height: 100%;
+    transition: var(--transition);
   }
 
   .gold-gradient {
@@ -42,42 +85,62 @@
   }
 
   .card-glass {
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-card);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(212,160,23,0.15);
+    border: 1px solid var(--border-card);
+    transition: var(--transition);
   }
 
   .card-gold-border {
-    border: 1px solid rgba(212,160,23,0.3);
+    border: 1px solid var(--border-card2);
+    transition: var(--transition);
   }
 
-  .text-gold {
-    color: #d4a017;
-  }
-
-  .bg-gold {
-    background-color: #d4a017;
-  }
+  .text-gold { color: var(--gold); }
+  .bg-gold   { background-color: var(--gold); }
 
   .btn-gold {
-    @apply bg-gold-500 text-haram-dark font-semibold rounded-xl px-6 py-3
-           active:scale-95 transition-all duration-150 shadow-lg;
+    @apply font-semibold rounded-xl px-6 py-3 active:scale-95 transition-all duration-150 shadow-lg;
+    background: var(--gold);
+    color: #0f0c07;
     box-shadow: 0 4px 20px rgba(212,160,23,0.3);
   }
 
   .btn-outline-gold {
-    @apply border border-gold-500 text-gold-400 font-semibold rounded-xl px-6 py-3
-           active:scale-95 transition-all duration-150;
+    @apply font-semibold rounded-xl px-6 py-3 active:scale-95 transition-all duration-150;
+    border: 1px solid var(--gold);
+    color: var(--gold);
   }
 
   .section-title {
-    @apply text-white font-semibold text-lg mb-4;
+    @apply font-semibold text-lg mb-4;
+    color: var(--text-1);
     font-family: 'Playfair Display', serif;
   }
 
   .nav-icon-label {
     @apply text-[10px] mt-1 font-medium tracking-wide;
   }
+}
+
+/* ── Light mode: global text overrides ── */
+.light-mode .text-white              { color: var(--text-1) !important; }
+.light-mode .text-white\/70          { color: var(--text-2) !important; }
+.light-mode .text-white\/60          { color: var(--text-2) !important; }
+.light-mode .text-white\/50          { color: var(--text-2) !important; }
+.light-mode .text-white\/40          { color: var(--text-3) !important; }
+.light-mode .text-white\/30          { color: var(--text-3) !important; }
+.light-mode .text-white\/25          { color: var(--text-4) !important; }
+.light-mode .text-white\/20          { color: var(--text-4) !important; }
+.light-mode .text-white\/10          { color: var(--text-4) !important; }
+
+/* Light mode: force screen backgrounds (overrides any inline styles) */
+.light-mode .screen-bg              { background: var(--bg-screen) !important; }
+
+/* Light mode: nav bar */
+.light-mode nav {
+  background: linear-gradient(0deg, var(--bg-nav) 0%, var(--bg-app) 100%) !important;
+  border-color: rgba(180,130,10,0.2) !important;
 }
 
 /* Custom scrollbar */
