@@ -25,28 +25,37 @@ const HIGHLIGHTS = [
     id: 'sky',
     title: 'Sky Mussallah',
     titleAr: 'مصلى السماء',
-    desc: 'Highest prayer room with panoramic Kaaba views',
-    descAr: 'أعلى مصلى مع إطلالة بانورامية على الكعبة',
+    desc: 'World-record highest prayer room — panoramic Kaaba views',
+    descAr: 'أعلى مصلى قياسياً في العالم — إطلالة بانورامية على الكعبة',
     bg: 'from-indigo-900 to-purple-900',
     icon: '🕌',
+  },
+  {
+    id: 'convention',
+    title: 'Fakieh Convention Centre',
+    titleAr: 'مركز فقيه للمؤتمرات',
+    desc: 'World-class events, exhibitions & conferences',
+    descAr: 'فعاليات ومعارض ومؤتمرات عالمية المستوى',
+    bg: 'from-rose-900 to-pink-900',
+    icon: '🎭',
+  },
+  {
+    id: 'museum',
+    title: 'Jabal Omar Museum',
+    titleAr: 'متحف جبل عمر',
+    desc: 'Explore Makkah\'s sacred heritage & history',
+    descAr: 'استكشف التراث المقدس وتاريخ مكة المكرمة',
+    bg: 'from-teal-900 to-cyan-900',
+    icon: '🏛️',
   },
   {
     id: 'boulevard',
     title: 'Al-Khalil Boulevard',
     titleAr: 'بوليفارد الخليل',
-    desc: 'High-end boutiques & luxury dining',
-    descAr: 'محلات راقية ومطاعم فاخرة',
+    desc: '280+ stores across 4 connected souks',
+    descAr: '٢٨٠+ متجر في ٤ أسواق متصلة',
     bg: 'from-amber-900 to-orange-900',
     icon: '🛍️',
-  },
-  {
-    id: 'museum',
-    title: 'Museum',
-    titleAr: 'المتحف',
-    desc: 'Explore Makkah\'s rich heritage',
-    descAr: 'استكشف تراث مكة المكرمة الغني',
-    bg: 'from-teal-900 to-cyan-900',
-    icon: '🏛️',
   },
 ]
 
@@ -80,8 +89,13 @@ export default function HomeScreen({ lang, setLang, navigate }) {
             </h1>
             <div className="flex items-center gap-1.5 mt-1">
               <MapPin size={11} className="text-gold-500" />
-              <span className="text-white/40 text-xs">Makkah Al-Mukarramah, KSA</span>
+              <span className="text-white/40 text-xs">
+                {lang === 'ar' ? 'مكة المكرمة، المملكة العربية السعودية' : 'Makkah Al-Mukarramah, KSA'}
+              </span>
             </div>
+            <p className="text-white/25 text-[10px] mt-0.5 italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {lang === 'ar' ? 'حيث تلتقي الأصالة بروح الحداثة' : 'Where authenticity meets modernity'}
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -237,11 +251,16 @@ export default function HomeScreen({ lang, setLang, navigate }) {
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
             {[
-              { name: 'Hyatt Regency', stars: 5, desc: 'King Fahd Gate view', color: '#d4a017' },
-              { name: 'Marriott', stars: 5, desc: '3-min walk to Haram', color: '#ef4444' },
-              { name: 'Address', stars: 5, desc: 'Sky Mussallah access', color: '#6366f1' },
-              { name: 'Hilton Suites', stars: 5, desc: 'Connected to mall', color: '#0ea5e9' },
-              { name: 'Jumeirah', stars: 5, desc: 'Luxury panoramic rooms', color: '#10b981' },
+              { name: 'Hyatt Regency',  stars: 5, desc: 'King Fahd Gate — 1 min',      color: '#d4a017', emoji: '🏙️' },
+              { name: 'Address',        stars: 5, desc: 'Sky Mussallah access',          color: '#c8a000', emoji: '🌟' },
+              { name: 'Jumeirah',       stars: 5, desc: 'Foster+Partners design',        color: '#10b981', emoji: '🏰' },
+              { name: 'Conrad',         stars: 5, desc: 'Facing King Fahad Gate',        color: '#3b82f6', emoji: '🏛️' },
+              { name: 'Hilton Suites',  stars: 5, desc: '5 restaurants · mall link',     color: '#0ea5e9', emoji: '🏨' },
+              { name: 'Marriott',       stars: 5, desc: '3-min walk to Haram',           color: '#ef4444', emoji: '🏩' },
+              { name: 'Hilton H&C',     stars: 5, desc: 'Largest pillar-free ballroom', color: '#0369a1', emoji: '🎪' },
+              { name: 'Rotana',         stars: 5, desc: 'Escalator to Haram',           color: '#9333ea', emoji: '🏯' },
+              { name: 'DoubleTree',     stars: 5, desc: 'Haj & Umrah services',          color: '#f97316', emoji: '🌳' },
+              { name: 'Sofitel',        stars: 5, desc: 'French luxury hospitality',     color: '#be185d', emoji: '🌹' },
             ].map(h => (
               <button
                 key={h.name}
@@ -256,7 +275,7 @@ export default function HomeScreen({ lang, setLang, navigate }) {
                   className="w-full h-20 rounded-xl mb-2 flex items-center justify-center text-3xl"
                   style={{ background: `${h.color}12` }}
                 >
-                  🏨
+                  {h.emoji}
                 </div>
                 <p className="text-white text-xs font-semibold">{h.name}</p>
                 <p className="text-white/40 text-[10px] mt-0.5">{h.desc}</p>
@@ -270,28 +289,60 @@ export default function HomeScreen({ lang, setLang, navigate }) {
           </div>
         </div>
 
+        {/* Project Stats */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: '10',       label: 'Hotels',       labelAr: 'فنادق',         color: '#d4a017' },
+            { value: '235K m²',  label: 'Project Area', labelAr: 'مساحة المشروع', color: '#9da07c' },
+            { value: '4',        label: 'Souks',        labelAr: 'أسواق',         color: '#a855f7' },
+          ].map(s => (
+            <div key={s.label} className="rounded-2xl p-3 card-glass card-gold-border text-center">
+              <p className="font-bold text-base" style={{ color: s.color }}>{s.value}</p>
+              <p className="text-white/30 text-[10px] mt-0.5">{lang === 'ar' ? s.labelAr : s.label}</p>
+            </div>
+          ))}
+        </div>
+
         {/* Amenities strip */}
         <div
           className="rounded-2xl p-4"
-          style={{ background: 'rgba(212,160,23,0.06)', border: '1px solid rgba(212,160,23,0.15)' }}
+          style={{ background: 'rgba(157,160,124,0.08)', border: '1px solid rgba(157,160,124,0.2)' }}
         >
-          <p className="text-gold-400 text-xs font-semibold mb-3 uppercase tracking-widest">
+          <p className="text-xs font-semibold mb-3 uppercase tracking-widest" style={{ color: '#9da07c' }}>
             {lang === 'ar' ? 'مرافق المجمع' : 'Complex Amenities'}
           </p>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { icon: '🏥', label: 'Medical Centre',       labelAr: 'مركز طبي'      },
-              { icon: '🏧', label: 'Al Rajhi ATMs',        labelAr: 'صرافات الراجحي' },
+              { icon: '🏥', label: 'Medical Centre',       labelAr: 'مركز طبي'        },
+              { icon: '🏧', label: 'Al Rajhi ATMs',        labelAr: 'صرافات الراجحي'  },
               { icon: '🚗', label: '1,500 Parking Spots',  labelAr: '١٥٠٠ موقف سيارة' },
-              { icon: '♿', label: 'Electric Carriage',    labelAr: 'عربة كهربائية'  },
-              { icon: '📶', label: 'Free Wi-Fi',           labelAr: 'واي فاي مجاني'  },
-              { icon: '🕌', label: 'Prayer Facilities',    labelAr: 'مرافق الصلاة'   },
+              { icon: '♿', label: 'Electric Carriage',    labelAr: 'عربة كهربائية'   },
+              { icon: '📶', label: 'Free Wi-Fi',           labelAr: 'واي فاي مجاني'   },
+              { icon: '🕌', label: 'Sky Mussallah',        labelAr: 'مصلى السماء'     },
             ].map(a => (
               <div key={a.label} className="flex items-center gap-2">
                 <span className="text-base">{a.icon}</span>
                 <span className="text-white/60 text-xs">{lang === 'ar' ? a.labelAr : a.label}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Official Contact */}
+        <div
+          className="rounded-2xl p-4 flex items-center justify-between"
+          style={{ background: 'rgba(212,160,23,0.06)', border: '1px solid rgba(212,160,23,0.15)' }}
+        >
+          <div>
+            <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-0.5">
+              {lang === 'ar' ? 'تواصل معنا' : 'Contact Us'}
+            </p>
+            <a href="tel:+966126017180" className="text-gold-400 text-sm font-semibold">+966 12 601 7180</a>
+            <p className="text-white/30 text-[10px] mt-0.5">{lang === 'ar' ? 'مكة المكرمة' : 'Makkah, KSA'}</p>
+          </div>
+          <div className="flex flex-col gap-1.5 text-right">
+            <p className="text-white/25 text-[10px]">@jabal_omar</p>
+            <p className="text-white/25 text-[10px]">@JabalOmarSa</p>
           </div>
         </div>
       </div>

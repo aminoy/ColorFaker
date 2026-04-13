@@ -132,6 +132,31 @@ export default function ProfileScreen({ lang, setLang, navigate, darkMode, setDa
           </div>
         ))}
 
+        {/* Official contact */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ background: 'rgba(157,160,124,0.08)', border: '1px solid rgba(157,160,124,0.2)' }}
+        >
+          <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#9da07c' }}>
+            {lang === 'ar' ? 'التواصل الرسمي' : 'Official Contact'}
+          </p>
+          <a href="tel:+966126017180" className="flex items-center gap-2 mb-2">
+            <Phone size={13} style={{ color: '#9da07c' }} />
+            <span className="text-white text-sm">+966 12 601 7180</span>
+          </a>
+          <a href="mailto:info@jabalomar.com.sa" className="flex items-center gap-2 mb-3">
+            <Globe size={13} style={{ color: '#9da07c' }} />
+            <span className="text-white/60 text-xs">www.jabalomar.com.sa</span>
+          </a>
+          <div className="flex gap-2 flex-wrap">
+            {['@jabal_omar', '@jabal_omar_sa', 'JabalOmarSa'].map(h => (
+              <span key={h} className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: 'rgba(157,160,124,0.15)', color: '#9da07c' }}>
+                {h}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* App info */}
         <div className="text-center pt-2">
           <p
@@ -141,7 +166,8 @@ export default function ProfileScreen({ lang, setLang, navigate, darkMode, setDa
             JABAL OMAR
           </p>
           <p className="text-white/20 text-xs tracking-widest">CONCIERGE+ v1.0.0</p>
-          <p className="text-white/10 text-[10px] mt-1">© 2024 Jabal Omar Development Company</p>
+          <p className="text-white/10 text-[10px] mt-1">© 2025 Jabal Omar Development Company</p>
+          <p className="text-white/10 text-[10px]">جبل عمر.. حيث تلتقي الأصالة بروح الحداثة</p>
         </div>
       </div>
     </div>

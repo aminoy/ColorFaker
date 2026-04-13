@@ -64,6 +64,14 @@ const DoubleTreeLogo = () => (
     <text x="8" y="33" fontFamily="serif" fontSize="13" fontWeight="bold" fill="#ffffff" letterSpacing="0.5">HILTON</text>
   </svg>
 )
+const SofitelLogo = () => (
+  <svg viewBox="0 0 120 40" width="90" height="30" fill="none">
+    <rect width="120" height="40" rx="4" fill="#1a0030"/>
+    <text x="8" y="26" fontFamily="serif" fontSize="16" fontWeight="bold" fill="#f9a8d4" letterSpacing="2">SOFITEL</text>
+    <circle cx="108" cy="12" r="6" fill="none" stroke="#f9a8d4" strokeWidth="1" opacity="0.6"/>
+    <circle cx="108" cy="12" r="3" fill="#f9a8d4" opacity="0.4"/>
+  </svg>
+)
 
 /* ─── Hotel image placeholders (styled SVG banners) ─── */
 const HotelBanner = ({ hotel }) => {
@@ -77,6 +85,7 @@ const HotelBanner = ({ hotel }) => {
     hiltonhc:   { bg: 'from-[#003580] to-[#001a40]', accent: '#60a5fa', text: 'HILTON',                sub: 'HOTEL & CONVENTION', emoji: '🎪' },
     rotana:     { bg: 'from-[#2e1065] to-[#1a0a3e]', accent: '#c084fc', text: 'ROTANA',                sub: 'JABAL OMAR MAKKAH', emoji: '🏯' },
     doubletree: { bg: 'from-[#431407] to-[#1c0a02]', accent: '#fb923c', text: 'DOUBLETREE',            sub: 'BY HILTON',         emoji: '🌳' },
+    sofitel:    { bg: 'from-[#2d0050] to-[#1a0030]', accent: '#f9a8d4', text: 'SOFITEL',                sub: 'JABAL OMAR MAKKAH', emoji: '🌹' },
   }
   const c = configs[hotel.id]
   return (
@@ -456,6 +465,44 @@ const HOTELS = [
     color: '#f97316',
     Logo: DoubleTreeLogo,
   },
+  {
+    id: 'sofitel',
+    name: 'Sofitel Makkah Jabal Omar',
+    nameAr: 'سوفيتيل مكة جبل عمر',
+    brand: 'Sofitel — Accor',        brandAr: 'سوفيتيل — أكور',
+    stars: 5,
+    tagline: 'French luxury art de vivre in the Holy City',
+    taglineAr: 'الرفاهية الفرنسية وفن العيش في المدينة المقدسة',
+    desc: 'Sofitel brings its signature French art de vivre to Makkah with elegantly designed rooms offering seamless comfort for Haj and Umrah pilgrims. Curated dining, refined décor, and impeccable 5-star service steps from Al-Masjid Al-Haram.',
+    descAr: 'يجلب سوفيتيل فن العيش الفرنسي المميز إلى مكة المكرمة مع غرف مصممة بأناقة توفر راحة سلسة لحجاج ومعتمري البيت الحرام. طعام منقّى وديكور راقٍ وخدمة ٥ نجوم لا تشوبها شائبة على بُعد خطوات من المسجد الحرام.',
+    distance: 'Jabal Omar complex',  distanceAr: 'مجمع جبل عمر',
+    distanceFt: '~0.4 km',
+    checkin: '3:00 PM',               checkout: '12:00 PM',
+    floors: 28,
+    rooms: 400,                       suites: 50,
+    villas: 0,                        penthouses: 0,
+    phone: '+966 12 601 7180',
+    roomSizeMin: 38,                  roomSizeMax: 480,
+    restaurants: [
+      { name: 'Le Soufflé',           type: 'French Fine Dining' },
+      { name: 'Al Baraka',            type: 'International Buffet' },
+      { name: 'So Café',              type: 'All-Day Lounge & Coffee' },
+    ],
+    amenities: [
+      'Free Wi-Fi', 'French Luxury Design', 'Fitness Centre',
+      'Prayer Hall', 'Business Centre', 'Concierge',
+      'Haj & Umrah Services', '24h Room Service', 'Spa',
+    ],
+    amenitiesAr: [
+      'واي فاي مجاني', 'تصميم فرنسي فاخر', 'مركز لياقة',
+      'مصلى', 'مركز أعمال', 'كونسيرج',
+      'خدمات الحج والعمرة', 'خدمة غرف ٢٤ س', 'سبا',
+    ],
+    highlights: ['Sofitel French luxury brand', '3 signature dining venues', 'Spa & wellness', 'Le Club Accor points'],
+    highlightsAr: ['علامة سوفيتيل الفرنسية الفاخرة', '٣ وجهات طعام مميزة', 'سبا وعافية', 'نقاط لو كلوب أكور'],
+    color: '#be185d',
+    Logo: SofitelLogo,
+  },
 ]
 
 /* ─── Detail view ─── */
@@ -633,7 +680,7 @@ export default function HotelsScreen({ lang, navigate }) {
           {lang === 'ar' ? 'فنادق جبل عمر' : 'Jabal Omar Hotels'}
         </h1>
         <p className="text-white/40 text-sm mt-1">
-          {lang === 'ar' ? '٩ فنادق فاخرة — ٦,٧٠٠+ وحدة بالقرب من الحرام الشريف' : '9 luxury hotels — 6,700+ keys near Al-Masjid Al-Haram'}
+          {lang === 'ar' ? '١٠ فنادق فاخرة — ٧,١٠٠+ وحدة بالقرب من الحرام الشريف' : '10 luxury hotels — 7,100+ keys near Al-Masjid Al-Haram'}
         </p>
       </div>
 

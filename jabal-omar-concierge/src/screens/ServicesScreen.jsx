@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowLeft, CreditCard, Stethoscope, Car, Wifi, PhoneCall, ShieldCheck, Baby, MapPin, Phone, ChevronRight } from 'lucide-react'
+import { ArrowLeft, CreditCard, Stethoscope, Car, Wifi, PhoneCall, ShieldCheck, Baby, MapPin, Phone, ChevronRight, Smartphone } from 'lucide-react'
 
 const SERVICE_SECTIONS = [
   {
@@ -143,6 +143,47 @@ export default function ServicesScreen({ lang, navigate }) {
             </div>
           </div>
         ))}
+
+        {/* Official Contact & App Download */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ background: 'rgba(157,160,124,0.08)', border: '1px solid rgba(157,160,124,0.2)' }}
+        >
+          <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#9da07c' }}>
+            {lang === 'ar' ? 'تواصل مع جبل عمر' : 'Jabal Omar Official'}
+          </p>
+          <div className="space-y-2.5">
+            <a href="tel:+966126017180" className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(157,160,124,0.2)' }}>
+                <Phone size={16} style={{ color: '#9da07c' }} />
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold">+966 12 601 7180</p>
+                <p className="text-white/30 text-xs">{lang === 'ar' ? 'المكتب الرئيسي — مكة' : 'Main Office — Makkah'}</p>
+              </div>
+            </a>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(157,160,124,0.2)' }}>
+                <Smartphone size={16} style={{ color: '#9da07c' }} />
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold">{lang === 'ar' ? 'تطبيق جبل عمر' : 'Jabal Omar App'}</p>
+                <p className="text-white/30 text-xs">App Store · Google Play · AppGallery</p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-1 flex-wrap">
+              {[
+                { label: 'Instagram', handle: '@jabal_omar' },
+                { label: 'X',         handle: '@jabal_omar_sa' },
+                { label: 'Facebook',  handle: 'JabalOmarSa' },
+              ].map(s => (
+                <span key={s.label} className="text-[10px] px-2 py-1 rounded-full" style={{ background: 'rgba(157,160,124,0.15)', color: '#9da07c' }}>
+                  {s.label}: {s.handle}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Emergency strip */}
         <button

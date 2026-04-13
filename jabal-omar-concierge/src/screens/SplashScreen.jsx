@@ -122,11 +122,11 @@ export default function SplashScreen() {
           transition: 'all 0.6s ease-out',
         }}
       >
-        <p className="text-white/40 text-xs tracking-widest uppercase">
-          Your Number-One Destination
+        <p className="text-white/50 text-xs tracking-widest uppercase">
+          Where Authenticity Meets Modernity
         </p>
-        <p className="text-white/25 text-xs tracking-widest uppercase mt-1">
-          in the Holiest City
+        <p style={{ fontFamily: "'Noto Naskh Arabic', serif" }} className="text-white/25 text-xs mt-1">
+          حيث تلتقي الأصالة بروح الحداثة
         </p>
       </div>
 
