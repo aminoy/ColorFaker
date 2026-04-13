@@ -93,7 +93,7 @@ export default function ExperiencesScreen({ lang, navigate }) {
       <div className="min-h-full pb-6 screen-bg">
         <div className={`relative h-56 bg-gradient-to-br ${e.gradient} flex flex-col items-center justify-center`}>
           <span className="text-6xl mb-2">{e.icon}</span>
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg,rgba(15,12,7,1) 0%,transparent 50%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg,rgba(15,25,35,1) 0%,transparent 50%)' }} />
           <button
             onClick={() => setSelected(null)}
             className="absolute top-10 left-4 w-9 h-9 rounded-xl card-glass flex items-center justify-center active:scale-90"
@@ -147,7 +147,7 @@ export default function ExperiencesScreen({ lang, navigate }) {
           {e.booking && (
             <button
               className="w-full py-3.5 rounded-xl font-semibold text-sm active:scale-95 transition-all"
-              style={{ background: e.color, color: '#0f0c07' }}
+              style={{ background: e.color, color: '#ffffff' }}
             >
               {lang === 'ar' ? 'احجز تجربتك الآن' : 'Book Your Experience'}
             </button>

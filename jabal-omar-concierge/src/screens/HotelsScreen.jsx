@@ -643,7 +643,7 @@ function HotelDetail({ h, lang, onBack }) {
         <div className="flex gap-3 pt-2">
           <button
             className="flex-1 py-3.5 rounded-2xl font-bold text-sm active:scale-95 transition-all shadow-lg"
-            style={{ background: `linear-gradient(135deg,${h.color},${h.color}cc)`, color: '#0f0c07' }}
+            style={{ background: `linear-gradient(135deg,${h.color},${h.color}cc)`, color: '#ffffff' }}
           >
             {lang === 'ar' ? 'احجز الآن' : 'Book Now'}
           </button>
@@ -702,7 +702,7 @@ export default function HotelsScreen({ lang, navigate }) {
             key={h.id}
             onClick={() => setSelected(h)}
             className="w-full rounded-3xl overflow-hidden active:scale-98 transition-all text-left shadow-lg"
-            style={{ border: `1px solid ${h.color}30`, background: '#141008' }}
+            style={{ border: `1px solid ${h.color}30`, background: '#1c2d3a' }}
           >
             {/* Banner */}
             <HotelBanner hotel={h} />

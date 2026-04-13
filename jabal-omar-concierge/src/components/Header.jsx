@@ -6,7 +6,7 @@ export default function Header({ title, subtitle, onBack, onNotifications, lang 
     <div
       className="flex-shrink-0 flex items-center justify-between px-4 py-4"
       style={{
-        background: 'linear-gradient(180deg,rgba(26,18,8,0.95) 0%,rgba(15,12,7,0.0) 100%)',
+        background: 'linear-gradient(180deg,rgba(28,45,58,0.95) 0%,rgba(23,38,54,0.0) 100%)',
         paddingTop: `calc(env(safe-area-inset-top, 0px) + 1rem)`,
       }}
     >

@@ -75,7 +75,7 @@ export default function HomeScreen({ lang, setLang, navigate }) {
       <div
         className="relative px-4 pt-12 pb-6"
         style={{
-          background: 'linear-gradient(180deg,rgba(26,18,8,1) 0%,rgba(15,12,7,0) 100%)',
+          background: 'linear-gradient(180deg,rgba(28,45,58,1) 0%,rgba(23,38,54,0) 100%)',
         }}
       >
         <div className="flex items-start justify-between">

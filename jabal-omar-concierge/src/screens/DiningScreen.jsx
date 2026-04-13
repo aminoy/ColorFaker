@@ -105,7 +105,7 @@ export default function DiningScreen({ lang, navigate }) {
             onClick={() => setCat(c.id)}
             className="flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all active:scale-90"
             style={cat === c.id
-              ? { background: '#d4a017', color: '#0f0c07' }
+              ? { background: '#4ab893', color: '#ffffff' }
               : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.1)' }
             }
           >

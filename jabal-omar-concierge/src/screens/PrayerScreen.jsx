@@ -124,7 +124,7 @@ export default function PrayerScreen({ lang, navigate }) {
             onClick={() => setTab(t.id)}
             className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all"
             style={tab === t.id
-              ? { background: '#d4a017', color: '#0f0c07' }
+              ? { background: '#4ab893', color: '#ffffff' }
               : { color: 'rgba(255,255,255,0.4)' }
             }
           >

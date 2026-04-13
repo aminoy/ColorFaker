@@ -2,37 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── CSS custom properties (dark default) ── */
+/* ── Jabal Omar Official Brand Palette ── */
 :root {
-  --bg-screen:    #0f0c07;
-  --bg-app:       #1a1208;
-  --bg-card:      rgba(255,255,255,0.04);
-  --bg-card2:     rgba(255,255,255,0.06);
-  --bg-nav:       #1a1208;
-  --text-1:       #ffffff;
-  --text-2:       rgba(255,255,255,0.6);
-  --text-3:       rgba(255,255,255,0.4);
-  --text-4:       rgba(255,255,255,0.25);
-  --border-card:  rgba(212,160,23,0.2);
-  --border-card2: rgba(212,160,23,0.3);
-  --gold:         #d4a017;
+  --jo-midnight:  #354d62;   /* Midnight Blue  */
+  --jo-emerald:   #4ab893;   /* Emerald Green  */
+  --jo-violet:    #6b4877;   /* Violet Dawn    */
+  --jo-redclay:   #df6a51;   /* Red Clay       */
+  --jo-herbal:    #8c9d6a;   /* Herbal Green   */
+  --jo-parchment: #e6e9e4;   /* Parchment      */
+}
+
+/* ── Dark theme (default) ── */
+:root {
+  --bg-screen:    #1c2d3a;
+  --bg-app:       #172636;
+  --bg-card:      rgba(255,255,255,0.05);
+  --bg-card2:     rgba(255,255,255,0.08);
+  --bg-nav:       #172636;
+  --text-1:       #f0f4f2;
+  --text-2:       rgba(240,244,242,0.65);
+  --text-3:       rgba(240,244,242,0.40);
+  --text-4:       rgba(240,244,242,0.25);
+  --border-card:  rgba(74,184,147,0.20);
+  --border-card2: rgba(74,184,147,0.30);
+  --gold:         #4ab893;   /* Emerald Green is the primary brand accent */
   --transition:   background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* ── Light mode overrides ── */
+/* ── Light mode (Parchment base) ── */
 [data-theme="light"] {
-  --bg-screen:    #faf6ed;
-  --bg-app:       #f0e8d5;
-  --bg-card:      rgba(255,255,255,0.75);
-  --bg-card2:     rgba(255,255,255,0.9);
-  --bg-nav:       #f0e8d5;
-  --text-1:       #1a0e00;
-  --text-2:       rgba(26,14,0,0.65);
-  --text-3:       rgba(26,14,0,0.45);
-  --text-4:       rgba(26,14,0,0.3);
-  --border-card:  rgba(180,130,10,0.25);
-  --border-card2: rgba(180,130,10,0.35);
-  --gold:         #a07010;
+  --bg-screen:    #e6e9e4;   /* Parchment      */
+  --bg-app:       #d5dbd2;
+  --bg-card:      rgba(255,255,255,0.80);
+  --bg-card2:     rgba(255,255,255,0.95);
+  --bg-nav:       #e6e9e4;
+  --text-1:       #1c2d3a;   /* Midnight Blue  */
+  --text-2:       rgba(28,45,58,0.70);
+  --text-3:       rgba(28,45,58,0.45);
+  --text-4:       rgba(28,45,58,0.28);
+  --border-card:  rgba(74,184,147,0.25);
+  --border-card2: rgba(74,184,147,0.35);
+  --gold:         #2e8066;   /* Darker emerald for light-mode contrast */
 }
 
 @layer base {
@@ -76,12 +86,12 @@
     transition: var(--transition);
   }
 
-  .gold-gradient {
-    background: linear-gradient(135deg, #d4a017, #f0cb4e, #d4a017);
+  .jo-gradient {
+    background: linear-gradient(135deg, #354d62, #4ab893);
   }
 
   .dark-gradient {
-    background: linear-gradient(180deg, #1a1208 0%, #0f0c07 100%);
+    background: linear-gradient(180deg, #1c2d3a 0%, #0f1e2a 100%);
   }
 
   .card-glass {
@@ -102,8 +112,8 @@
   .btn-gold {
     @apply font-semibold rounded-xl px-6 py-3 active:scale-95 transition-all duration-150 shadow-lg;
     background: var(--gold);
-    color: #0f0c07;
-    box-shadow: 0 4px 20px rgba(212,160,23,0.3);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(74,184,147,0.35);
   }
 
   .btn-outline-gold {
@@ -134,13 +144,13 @@
 .light-mode .text-white\/20          { color: var(--text-4) !important; }
 .light-mode .text-white\/10          { color: var(--text-4) !important; }
 
-/* Light mode: force screen backgrounds (overrides any inline styles) */
+/* Light mode: force screen backgrounds */
 .light-mode .screen-bg              { background: var(--bg-screen) !important; }
 
 /* Light mode: nav bar */
 .light-mode nav {
   background: linear-gradient(0deg, var(--bg-nav) 0%, var(--bg-app) 100%) !important;
-  border-color: rgba(180,130,10,0.2) !important;
+  border-color: rgba(74,184,147,0.2) !important;
 }
 
 /* Custom scrollbar */
@@ -148,41 +158,31 @@
 .screen-content { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Slide transitions */
-.slide-up-enter {
-  transform: translateY(100%);
-  opacity: 0;
-}
+.slide-up-enter { transform: translateY(100%); opacity: 0; }
 .slide-up-enter-active {
-  transform: translateY(0);
-  opacity: 1;
+  transform: translateY(0); opacity: 1;
   transition: all 300ms ease-out;
 }
-.slide-up-exit {
-  transform: translateY(0);
-  opacity: 1;
-}
+.slide-up-exit { transform: translateY(0); opacity: 1; }
 .slide-up-exit-active {
-  transform: translateY(-20px);
-  opacity: 0;
+  transform: translateY(-20px); opacity: 0;
   transition: all 200ms ease-in;
 }
 
-/* Shimmer animation for loading */
+/* Shimmer */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(212,160,23,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(74,184,147,0.08) 50%, rgba(255,255,255,0.03) 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
 
-/* Prayer dot pulse */
+/* Notification / status pulse — Emerald Green */
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212,160,23,0.4); }
-  50%       { box-shadow: 0 0 0 8px rgba(212,160,23,0); }
+  0%, 100% { box-shadow: 0 0 0 0   rgba(74,184,147,0.5); }
+  50%       { box-shadow: 0 0 0 8px rgba(74,184,147,0);   }
 }
-.pulse-gold {
-  animation: pulse-gold 2s infinite;
-}
+.pulse-gold { animation: pulse-gold 2s infinite; }

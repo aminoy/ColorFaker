@@ -162,7 +162,7 @@ export default function ConciergeScreen({ lang, navigate }) {
           className="w-11 h-11 rounded-2xl flex items-center justify-center active:scale-90 transition-all"
           style={{ background: input.trim() ? '#d4a017' : 'rgba(212,160,23,0.15)' }}
         >
-          <Send size={16} style={{ color: input.trim() ? '#0f0c07' : 'rgba(212,160,23,0.4)' }} />
+          <Send size={16} style={{ color: input.trim() ? '#ffffff' : 'rgba(74,184,147,0.3)' }} />
         </button>
       </div>
 
