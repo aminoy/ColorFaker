@@ -1,0 +1,56 @@
+{
+  "periodStart": "2025-04-07T00:00:00.000Z",
+  "periodEnd": "2025-04-14T00:00:00.000Z",
+  "totalConversations": 128,
+  "newContacts": 94,
+  "returningContacts": 34,
+  "conversationsByCategory": {
+    "hotel_booking": 63,
+    "retail_leasing": 28,
+    "vendor": 14,
+    "general_inquiry": 19,
+    "uncategorized": 4
+  },
+  "leadsByCategory": {
+    "hotel_booking": 55,
+    "retail_leasing": 22,
+    "vendor": 14,
+    "general_inquiry": 19,
+    "uncategorized": 0
+  },
+  "averageFirstResponseSeconds": 38.4,
+  "averageResolutionSeconds": 5400,
+  "handoffCount": 17,
+  "handoffRate": 0.1328125,
+  "topActiveDays": [
+    {
+      "day": "2025-04-09",
+      "count": 28
+    },
+    {
+      "day": "2025-04-11",
+      "count": 24
+    },
+    {
+      "day": "2025-04-12",
+      "count": 21
+    }
+  ],
+  "topActiveHours": [
+    {
+      "hour": 13,
+      "count": 19
+    },
+    {
+      "hour": 20,
+      "count": 17
+    },
+    {
+      "hour": 9,
+      "count": 14
+    }
+  ],
+  "arabicConversations": 101,
+  "englishConversations": 25,
+  "undetectedLanguageConversations": 2
+}

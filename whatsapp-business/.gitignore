@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+.env.*.local
+*.log
+reports/*.csv
+reports/*.json
+reports/*.md
+!reports/.gitkeep
+!reports/sample-*.csv
+!reports/sample-*.json
+!reports/sample-*.md
+.DS_Store
