@@ -2,318 +2,369 @@
 
 A production-ready WhatsApp management system for **Jabal Omar Development Company** built on the official [WhatsApp Business Cloud API](https://developers.facebook.com/docs/whatsapp/cloud-api).
 
-It handles incoming messages, auto-replies in Arabic (with English fallback), routes
-inquiries by category (hotel booking, retail leasing, vendors, general), captures
-leads in a normalized database schema, supports human handoff, and produces weekly
-analytics reports in CSV, JSON, and Markdown.
+The platform is an **operational product**, not just a backend:
+
+- **Backend** (Node.js + TypeScript + Express + PostgreSQL): webhook handling, Arabic-first auto-replies, category routing, lead capture, 24-hour service-window logic, template-fallback, retry-safe outbound queue, CRM sync abstraction, AI-assisted drafting (human-in-the-loop only), SLA tracking, follow-ups, audit logging, weekly analytics.
+- **Internal operator web app** (React + TypeScript + Vite, RTL-aware, AR/EN): secure login (JWT + CSRF double-submit), role-based access, inbox with filters + search + thread view + reply composer + notes + tags + assignments + priority flags + lead panel, management dashboard, follow-ups, SLA-breach board, audit log, user management.
 
 ---
 
-## 1. Stack
-
-| Layer          | Choice                                           |
-| -------------- | ------------------------------------------------ |
-| Runtime        | Node.js 20 + TypeScript                          |
-| HTTP           | Express 4                                        |
-| Validation     | Zod                                              |
-| DB             | PostgreSQL 16 (via `pg` pool)                    |
-| Scheduler      | `node-cron`                                      |
-| Logging        | `pino` (JSON in prod, pretty in dev)             |
-| HTTP client    | `axios` with exponential-backoff retries         |
-| Containerization| Docker + docker-compose                         |
-| Tests          | Jest + ts-jest                                   |
-
----
-
-## 2. Project structure
+## 1. Architecture at a glance
 
 ```
 whatsapp-business/
-├── src/
-│   ├── config/          # env + logger
-│   ├── controllers/     # HTTP handlers (thin)
-│   ├── routes/          # Express routers
-│   ├── services/        # Business logic (WA client, intent, lead extraction, templates, signature)
-│   ├── state/           # Pure conversation state machine
-│   ├── models/          # DB repositories (contacts, conversations, messages, leads, handoff, events)
-│   ├── db/              # pg pool, migrations runner, seed runner
-│   ├── jobs/            # Scheduler + weekly report runner
-│   ├── reporting/       # Metrics SQL + CSV/JSON/Markdown formatters
-│   ├── middleware/      # Raw-body capture (for HMAC)
-│   ├── types/           # Shared domain types
-│   └── server.ts        # Entry point
-├── migrations/          # SQL migrations (001_init.sql)
-├── seeds/               # 001_seed.sql (inquiry categories)
-├── tests/
-│   ├── unit/            # Jest tests (state machine, intent, reporting, signature, parser, ...)
-│   └── fixtures/        # Sample webhook payloads
-├── scripts/             # generateSampleReport.ts
-├── reports/             # Weekly CSV/JSON/MD outputs
-├── Dockerfile
+├── src/                          # Backend (Node 20 + TS)
+│   ├── config/                   # env (Zod-validated) + logger (pino)
+│   ├── controllers/              # webhook controller
+│   ├── routes/
+│   │   ├── webhook.ts            # POST/GET /webhook (HMAC-validated)
+│   │   ├── auth.ts               # /auth/login, /logout, /me
+│   │   ├── api.ts                # /api/* — authenticated inbox + dashboard + admin
+│   │   ├── admin.ts              # (legacy, superseded by /api)
+│   │   └── health.ts             # /healthz, /readyz
+│   ├── services/
+│   │   ├── whatsappClient.ts     # text + template + interactive + raw send
+│   │   ├── whatsappErrors.ts     # classify Meta error codes
+│   │   ├── serviceWindow.ts      # 24h customer-service window logic
+│   │   ├── outboundQueue.ts      # queue worker, retries, backoff, template fallback
+│   │   ├── intent.ts / templates.ts / language.ts / leadExtraction.ts
+│   │   ├── conversationService.ts # orchestrator
+│   │   ├── auth.ts + audit.ts    # bcrypt + JWT + structured audit
+│   │   ├── sla.ts                # deadline computation + risk query
+│   │   ├── aiAssist.ts           # suggestions (Anthropic + heuristic fallback)
+│   │   └── crm/                  # adapter interface + mock + webhook + dispatcher
+│   ├── state/stateMachine.ts     # pure conversation FSM
+│   ├── models/                   # thin SQL repositories
+│   ├── middleware/               # rawBody + auth + RBAC + CSRF guard
+│   ├── reporting/                # weekly metrics + dashboard metrics + formatters
+│   ├── jobs/                     # schedulers (weekly report, CRM retry)
+│   └── server.ts                 # entry
+├── web/                          # Internal operator console (React + TS + Vite)
+│   └── src/{App,pages,api,i18n}  # Inbox, Dashboard, Follow-ups, SLA, Audit, Users
+├── migrations/
+│   ├── 001_init.sql              # contacts, conversations, messages, leads, handoff, weekly_reports
+│   └── 002_inbox_auth_sla.sql    # users, teams, assignments, notes, sla_rules, follow_ups,
+│                                 # audit_logs, crm_sync_logs, outbound_queue, ai_suggestions
+├── seeds/                        # categories, teams, SLA rules (users seeded by src/db/seed.ts)
+├── tests/                        # 70 unit tests (see §9)
+├── Dockerfile                    # multi-stage: builds web + backend, runs migrations + seeds
 ├── docker-compose.yml
 └── .env.example
 ```
 
+### How a message flows
+
+1. Customer sends a WhatsApp message → Meta POSTs to `/webhook`.
+2. HMAC signature is validated against the raw body (`src/services/signature.ts`).
+3. 200 OK acked immediately; payload parsed and each message deduped (`webhook_events.event_id`, `messages.wa_message_id` both unique).
+4. `conversationService.handleInboundText` runs:
+   - upserts the contact
+   - detects language, intent, handoff triggers
+   - runs the pure state machine (`src/state/stateMachine.ts`)
+   - persists inbound message + updates operational status + tags + SLA deadlines
+   - upserts the structured lead and fires an async CRM sync
+   - enqueues any auto-reply through the **outbound queue** (never sends inline)
+5. The outbound worker picks up queued rows, respects the 24-hour window, falls back to an approved template if configured, classifies Meta errors, and retries with exponential backoff.
+
+### How an operator works
+
+1. Operator signs in at the React console (`/auth/login`) — bcrypt + JWT in httpOnly cookie + CSRF double-submit cookie.
+2. Inbox polls `/api/inbox` with filters (category, status, assignee, priority, date range, handoff, unread) + full-text search over contact name, phone, company name, message body.
+3. Selecting a conversation loads its timeline, lead, notes, assignments, follow-ups, and service-window status.
+4. Replies are **queued**, not sent inline — the worker handles 24h window / templates / rate limits.
+5. AI-suggested replies are drafted into the composer but never auto-sent; every suggestion view is recorded in `audit_logs`.
+6. Every mutating action (reply, status change, priority change, assignment, note creation, follow-up creation, user creation) is written to `audit_logs`.
+
 ---
 
-## 3. Setup
+## 2. Local setup
 
-### 3.1 Prerequisites
+### Prerequisites
 
-- Node.js ≥ 18
-- PostgreSQL ≥ 14 (or just run `docker compose up db`)
-- A Meta developer account with a WhatsApp Business App and a test/phone number ID
+- Node.js ≥ 20
+- PostgreSQL ≥ 14 (or use `docker compose up -d db`)
+- A Meta developer app with WhatsApp Business API access
 
-### 3.2 Install & run locally
+### Bootstrap
 
 ```bash
+# Backend
+cd whatsapp-business
 cp .env.example .env
-# Edit .env and fill in the WhatsApp credentials (see section 4).
 npm install
-docker compose up -d db                # or point DATABASE_URL at your own PG
+docker compose up -d db
 npm run migrate
-npm run seed
-npm run dev
+npm run seed          # seeds categories, teams, SLA rules, demo users
+npm run dev           # http://localhost:3000
+
+# Operator console (separate terminal, proxies to backend)
+cd web
+npm install
+npm run dev           # http://localhost:5173
 ```
 
-The server starts on `http://localhost:3000`.
+The seed inserts four demo users (password `changeme123`, configurable via `SEED_DEFAULT_PASSWORD`):
 
-Health checks:
-```
-GET /healthz   # liveness
-GET /readyz    # verifies DB connectivity
-```
+| Email                        | Role    |
+| ---------------------------- | ------- |
+| admin@jabalomar.local        | admin   |
+| manager@jabalomar.local      | manager |
+| agent@jabalomar.local        | agent   |
+| viewer@jabalomar.local       | viewer  |
 
-### 3.3 Run in Docker
+Role capabilities:
+
+| Action                          | admin | manager | agent | viewer |
+| ------------------------------- | :---: | :-----: | :---: | :----: |
+| Read inbox + dashboard          |   ✓   |    ✓    |   ✓   |    ✓   |
+| Reply / add notes / change tags |   ✓   |    ✓    |   ✓   |        |
+| Change status / priority        |   ✓   |    ✓    |   ✓   |        |
+| Assign conversations            |   ✓   |    ✓    |       |        |
+| Create users                    |   ✓   |         |       |        |
+| View audit log                  |   ✓   |    ✓    |       |        |
+| View CRM logs / retry           |   ✓   |    ✓    |       |        |
+
+### Docker (one-shot)
 
 ```bash
 docker compose up --build
+# Waits for Postgres, then migrates, seeds, starts server on :3000 with the
+# compiled web console served from the same origin.
 ```
-
-The `app` service runs migrations automatically before starting (`node dist/db/migrate.js && node dist/server.js`).
 
 ---
 
-## 4. WhatsApp Cloud API configuration
+## 3. WhatsApp Cloud API configuration
 
-Get these from the [Meta Developer Console](https://developers.facebook.com/apps/):
+Same as v1, plus new operational settings. See `.env.example` for all env vars.
 
-| Env var                          | Where to find it                                                                                  |
-| -------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `WHATSAPP_ACCESS_TOKEN`          | App → WhatsApp → API Setup → **Temporary access token** (use System User long-lived in prod)      |
-| `WHATSAPP_PHONE_NUMBER_ID`       | App → WhatsApp → API Setup → Phone number ID                                                      |
-| `WHATSAPP_BUSINESS_ACCOUNT_ID`   | App → WhatsApp → API Setup → WABA ID                                                              |
-| `WHATSAPP_API_VERSION`           | e.g. `v20.0`                                                                                       |
-| `WHATSAPP_VERIFY_TOKEN`          | Any random string — mirror it in Meta webhook config                                              |
-| `WHATSAPP_APP_SECRET`            | App → Settings → Basic → **App Secret** (used to validate `X-Hub-Signature-256`)                   |
+Key new variables:
 
-### Webhook setup in Meta Console
-
-1. Public-ingress your app (see §7). The webhook URL is `https://<your-host>/webhook`.
-2. In the Meta app console → WhatsApp → Configuration → Edit webhook:
-   - **Callback URL:** `https://<your-host>/webhook`
-   - **Verify token:** matches `WHATSAPP_VERIFY_TOKEN`
-   - Subscribe to **messages** (and `message_status` if you want delivery/read receipts).
-3. Send a test message from WhatsApp — you should see `http.request` entries in the logs.
+| Env var                            | Purpose                                                                                              |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `WHATSAPP_SERVICE_WINDOW_HOURS`    | How long the free-form window stays open (Meta default: 24 hours).                                   |
+| `WHATSAPP_DEFAULT_TEMPLATE_NAME`   | Approved template name used when the window closes. If blank, outbound is parked as `waiting_24h`.   |
+| `WHATSAPP_DEFAULT_TEMPLATE_LANG`   | Template language code (`ar`, `en_US`, etc.).                                                        |
+| `OUTBOUND_QUEUE_POLL_MS`           | How often the queue worker drains.                                                                   |
+| `OUTBOUND_MAX_ATTEMPTS`            | Max attempts before a message is abandoned.                                                          |
+| `JWT_SECRET`                       | **REQUIRED in prod.** 32+ byte random.                                                               |
+| `AUTH_COOKIE_SECURE`               | Set to `true` when serving over HTTPS.                                                               |
+| `CRM_ADAPTER`                      | `mock` (dev) · `webhook` (generic) · `disabled`.                                                     |
+| `CRM_WEBHOOK_URL`, `CRM_WEBHOOK_AUTH_HEADER` | Target + auth for the generic webhook adapter.                                              |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Optional — enables Claude-backed suggestions. Blank ⇒ local heuristic fallback.                   |
 
 ---
 
-## 5. Functional behaviour
+## 4. Database schema
 
-### Inbound flow
+Normalized and extended. See `migrations/001_init.sql` + `migrations/002_inbox_auth_sla.sql`.
 
-1. On the **first** message from a new contact, reply with a bilingual welcome menu (Arabic first, English fallback).
-2. User selects a category:
-   - `1` or keywords → **hotel_booking**
-   - `2` or keywords → **retail_leasing**
-   - `3` or keywords → **vendor** (also sends the vendor portal link)
-   - `4` or keywords → **general_inquiry**
-3. The bot acknowledges, tags the conversation, and starts extracting lead fields from free-text (phone, name, email, guests, dates, business type, etc.).
-4. If the user says "complaint", "human", "مشكلة", "موظف"… the bot sets `needs_human = true`, sends a handoff notice, and records a `handoff_events` row.
+Tables:
 
-### State machine
-
-All transitions are in `src/state/stateMachine.ts` as a **pure function** — easy to reason about and unit-test.
-
-States: `new`, `awaiting_category`, `collecting_hotel`, `collecting_retail`, `collecting_vendor`, `collecting_general`, `handed_off`, `resolved`.
-
-### Retry-safe outbound messaging
-
-`WhatsAppClient.postWithRetry` retries on 5xx / network errors with exponential backoff (500ms → 8s, 4 attempts). 4xx errors fail fast.
-
-### Webhook safety
-
-- `X-Hub-Signature-256` is validated against the **raw request body** using a constant-time compare (`src/services/signature.ts`).
-- Webhook events are deduplicated by `wamid` through the `webhook_events` table.
-- Messages are dedup-persisted via a `UNIQUE(wa_message_id)` on `messages`.
-- We respond `200 OK` immediately, then process asynchronously — so Meta never retries just because our handler is slow.
-- Basic rate limiting on `POST /webhook` (configurable window / max).
+- **contacts** — WhatsApp users
+- **conversations** — state, operational status, priority, assignee, team, SLA deadlines, unread counter
+- **messages** — inbound + outbound (`wa_message_id` unique, `author_user_id` for agent replies)
+- **leads** — structured lead fields (upserted per conversation)
+- **inquiry_categories** — static lookup
+- **handoff_events** — audit trail
+- **webhook_events** — inbound dedup + audit
+- **weekly_reports** — persisted weekly metrics
+- **users**, **teams** — operator accounts + grouping
+- **conversation_notes** — structured internal notes with author FK
+- **assignments** — assignment history (who / when / by / reason)
+- **sla_rules** — per category + priority, with `is_active` flag
+- **follow_ups** — reminders with owner, due time, status
+- **audit_logs** — every significant operator action (login, reply_sent, assignment_changed, note_created, status_changed, priority_changed, follow_up_created, ai_suggestion_viewed, user_created, …)
+- **crm_sync_logs** — per-attempt CRM sync tracking with `next_retry_at`
+- **outbound_queue** — rate-limit-friendly outbound send queue with `waiting_24h` + `abandoned` states
+- **ai_suggestions** — cached AI suggestions for audit
 
 ---
 
-## 6. Database schema
+## 5. Security
 
-See `migrations/001_init.sql`. Normalized tables:
+### Authentication + authorization
 
-- `inquiry_categories` — static lookup (`hotel_booking`, `retail_leasing`, `vendor`, `general_inquiry`)
-- `contacts` — one row per WhatsApp user (`wa_id` unique)
-- `conversations` — one open conversation per contact at a time; carries state, tags, category, needs_human, notes
-- `messages` — inbound + outbound; `wa_message_id` unique for dedup
-- `leads` — structured lead per conversation (one row, upserted as more fields arrive)
-- `handoff_events` — audit trail of every escalation
-- `webhook_events` — raw webhook dedup + audit log
-- `weekly_reports` — persisted metrics per period
+- bcrypt (cost 10) password hashing; passwords never logged.
+- JWT signed with `JWT_SECRET` (HS256), stored in an **httpOnly, SameSite=Lax** cookie. `AUTH_COOKIE_SECURE=true` in prod.
+- Alternative: `Authorization: Bearer <token>` header for machine clients.
+- RBAC via `requireRole(...)` middleware (`admin`, `manager`, `agent`, `viewer`).
+- CSRF: double-submit cookie (`jo_csrf`) mirrored to `X-CSRF-Token` header on unsafe requests. Bearer-token callers are exempt.
+- Rate-limited login (`LOGIN_RATE_LIMIT_*`); failures are audited with IP/UA.
 
-### Migrations / seeds
+### Webhook
 
-```bash
-npm run migrate      # idempotent; tracks applied migrations in schema_migrations
-npm run seed         # inserts inquiry categories + a test contact
-```
+- HMAC `X-Hub-Signature-256` validated against the byte-exact raw body, constant-time compare.
+- Raw-body capture happens **before** JSON parsing.
+- Dedup on `wamid` prevents duplicate processing; fast 200 OK stops Meta retry storms.
 
-Add a new migration by dropping a `NNN_name.sql` file in `migrations/` — they are applied in lexical order.
+### Audit log
 
----
+Every one of these events is persisted in `audit_logs` with actor, IP, user-agent and metadata:
 
-## 7. Weekly analytics
+`login`, `login_failed`, `logout`, `user_created`, `reply_sent`, `status_changed`, `priority_changed`, `assignment_changed`, `note_created`, `follow_up_created`, `ai_suggestion_viewed`
 
-Runs via cron (default: `0 7 * * 1` in `Asia/Riyadh`, i.e. Mondays 07:00) computing the previous Monday→Monday window.
+The log is queryable at `/api/audit` (admin/manager only).
 
-Metrics include:
-- Total conversations (+ new vs returning contact split)
-- Conversations by category
-- Avg first response time, avg resolution time
-- Handoff count + rate
-- Leads by category
-- Top active days + hours
-- Arabic / English / undetected language split
+### Log redaction
 
-Outputs are written to `REPORT_OUTPUT_DIR` (default `./reports/`) and persisted in `weekly_reports`:
-
-- `weekly-YYYY-MM-DD_YYYY-MM-DD.csv`
-- `weekly-YYYY-MM-DD_YYYY-MM-DD.json`
-- `weekly-YYYY-MM-DD_YYYY-MM-DD.md`
-
-### Run manually
-
-```bash
-npm run report:weekly
-```
-
-### Generate a sample (no DB)
-
-```bash
-npx ts-node scripts/generateSampleReport.ts
-```
-
-See `reports/sample-weekly.{csv,json,md}`.
+`pino` redacts `Authorization` headers and tokens at the boundary.
 
 ---
 
-## 8. Admin endpoints
+## 6. SLA + follow-ups
 
-*Read-only and unauthenticated by default — put them behind nginx/Cloudflare Access / API key in production.*
+- `sla_rules` — rows per (`category_code`, `priority`). Precedence: exact match ▸ category+null ▸ global.
+- On category / priority change the deadlines are recomputed from `started_at` and persisted into `conversations.first_response_due_at` / `resolution_due_at`.
+- `GET /api/sla/risks` lists all open conversations with minutes-until-due + breach flags.
+- `follow_ups` records operator-scheduled reminders with an owner, due time, and `pending | done | cancelled` status. Overdue filter powers the dashboard callout and the Follow-ups page's "overdue" filter.
 
-```
-GET  /admin/leads?category=hotel_booking&limit=50
-GET  /admin/conversations?needs_human=true
-POST /admin/conversations/:id/note   {"note":"Called back at 15:00"}
-```
+---
+
+## 7. WhatsApp production compliance
+
+- **24-hour service window**: `services/serviceWindow.ts` tracks `last_customer_message_at`. The outbound queue checks window status before sending free-form text.
+- **Template fallback**: If the window is closed and `WHATSAPP_DEFAULT_TEMPLATE_NAME` is set, the queue automatically posts a templated message (with the originally intended text as a body variable, truncated to 60 chars). If no template is configured, the queued text is parked as `waiting_24h`.
+- **Error classification**: `services/whatsappErrors.ts` maps Meta error codes to `retryable | rate_limited | expired_window | recipient_block | permanent`, driving sensible retry behaviour.
+- **Retry-safe outbound**: exponential backoff (30s → 10min cap), capped attempts, permanent errors abandoned with a reason code.
+- **Full auditability**: `outbound_queue` records status, attempts, last error code, `wa_message_id`, and every delivery-status webhook updates the corresponding `messages.status`.
+
+---
+
+## 8. CRM sync
+
+- `CrmAdapter` interface + two adapters shipped:
+  - `MockCrmAdapter` (default, in-memory; used by tests).
+  - `WebhookCrmAdapter` — POSTs the `CrmLeadPayload` JSON to `CRM_WEBHOOK_URL` with optional auth header. Works with Zapier / Make / custom ingest.
+- Syncs fire automatically when a lead is upserted.
+- `crm_sync_logs` tracks attempts + `next_retry_at`; the background scheduler retries failed rows every 2 minutes using exponential backoff, capped at `CRM_RETRY_MAX` attempts (then marked `abandoned`).
+- Admin can trigger `POST /api/crm/retry` manually.
 
 ---
 
 ## 9. Testing
 
 ```bash
-npm test                     # 39 unit tests: intent, state machine, lead extraction,
-                             # language detection, signature, webhook parser, report formatters
-npm run lint                 # tsc --noEmit
+npm test           # 70 unit tests — all green
+npm run lint       # tsc --noEmit (backend)
+cd web && npx tsc --noEmit && npx vite build
 ```
 
-Tests that touch a real DB are intentionally *not* included — the models are thin SQL wrappers, and the reporting SQL is verified by running `npm run report:weekly` against a seeded DB. See §10.3 for sample end-to-end verification.
+Test coverage spans:
+
+- **Intent** + **language detection** + **lead extraction** (Arabic/English, diacritics, Arabic-Indic digits).
+- **State machine** (new + awaiting + collecting + pivot + handoff).
+- **HMAC signature** + **webhook parser** (text, interactive list, delivery statuses).
+- **Auth** (bcrypt round-trip, JWT issue/verify, tamper rejection).
+- **RBAC** (unauth / forbidden / pass).
+- **SLA** (rule precedence, deadline arithmetic, active flag).
+- **24h window** (no-inbound, open, expired, custom window length).
+- **Meta error classification** (network, 131047, rate limit, 5xx, recipient block, permanent).
+- **Outbound queue backoff** (monotonic + 10min cap).
+- **CRM** (mock capture + simulated transient failures + backoff monotonicity).
+- **Report formatters** (CSV/JSON/Markdown; week-boundary math).
+- **Dashboard CSV** (escaping, empty rows).
 
 ---
 
-## 10. Deployment
+## 10. HTTP surface (authenticated `/api/*` unless noted)
 
-### 10.1 Suggested topology
+### Auth (public)
 
-- **App**: 2× containers behind a load balancer (HTTP/2 terminating at LB; plain HTTP inside).
-- **Database**: managed Postgres (RDS / Cloud SQL) with PITR.
-- **Webhook ingress**: Cloudflare / ALB with HTTPS-only + IP allowlist for Meta if desired.
-- **Secrets**: AWS Secrets Manager / GCP Secret Manager; never bake into images.
-- **Observability**: ship `pino` JSON logs to CloudWatch / Stackdriver / ELK. Alert on `webhook.signature_invalid`, `webhook.handle_failed`, and non-2xx rate on `/webhook`.
-- **Scheduler**: Weekly cron runs inside the container. For HA, disable the internal scheduler (`WEEKLY_REPORT_CRON=`) and run `npm run report:weekly` from a dedicated job (EventBridge, K8s CronJob).
+- `POST /auth/login` — body `{email, password}`. Sets cookie, returns `{token, csrf, user}`.
+- `POST /auth/logout` — clears cookies.
+- `GET /auth/me` — current user.
 
-### 10.2 Production checklist
+### Inbox + thread
 
-- [ ] `NODE_ENV=production`
-- [ ] `WHATSAPP_APP_SECRET` and `WHATSAPP_VERIFY_TOKEN` populated from secret manager
-- [ ] Webhook URL registered and verified in Meta console
-- [ ] Rate limit tuned (`WEBHOOK_RATE_LIMIT_*`)
-- [ ] Database backups + migration plan
-- [ ] Admin routes protected by auth proxy
-- [ ] Alerting on error rates & failed outbound messages
-- [ ] Log retention + PII policy (messages contain personal data)
+- `GET  /api/inbox?category=&status=&priority=&assignee_id=&team_id=&needs_human=&unread=&start_date=&end_date=&search=&limit=&offset=`
+- `GET  /api/conversations/:id` — full timeline + lead + notes + assignments + follow-ups + service window
+- `POST /api/conversations/:id/read`
+- `POST /api/conversations/:id/reply`                    `{body}`        (enqueues, respects 24h)
+- `POST /api/conversations/:id/status`                   `{status}`
+- `POST /api/conversations/:id/priority`                 `{priority}`
+- `POST /api/conversations/:id/tags`                     `{tags}`
+- `POST /api/conversations/:id/assign`                   `{assignee_id,team_id?,reason?}` (admin/manager)
+- `POST /api/conversations/:id/notes`                    `{body}`
+- `POST /api/conversations/:id/follow-ups`               `{owner_user_id,due_at,note?}`
+- `POST /api/conversations/:id/ai-suggest`               `{kind,language?}` — `reply|summary|category|priority|escalation`
 
-### 10.3 Smoke test
+### Follow-ups
 
-```bash
-# 1. Bring up the stack
-docker compose up --build
+- `GET  /api/follow-ups?owner=me&overdue=true&status=pending`
+- `POST /api/follow-ups/:id/complete`
+- `POST /api/follow-ups/:id/cancel`
 
-# 2. Simulate a webhook (valid signature required)
-node - <<'JS'
-const fs = require('fs');
-const crypto = require('crypto');
-const body = fs.readFileSync('tests/fixtures/inbound-text-arabic.json');
-const sig = 'sha256=' + crypto.createHmac('sha256', process.env.WHATSAPP_APP_SECRET).update(body).digest('hex');
-console.log('curl -X POST http://localhost:3000/webhook -H "Content-Type: application/json" -H "X-Hub-Signature-256: ' + sig + '" --data-binary @tests/fixtures/inbound-text-arabic.json');
-JS
-```
+### SLA
 
----
+- `GET /api/sla/rules`
+- `GET /api/sla/risks`
 
-## 11. Security & compliance notes
+### Dashboard + exports
 
-- No secrets in the repo; all credentials come from env vars (validated by Zod at boot).
-- HMAC validation on every inbound webhook (constant-time compare).
-- Raw body is captured **before** JSON parsing so we hash the byte-exact payload.
-- Rate limiting on `/webhook`.
-- All significant state changes log structured events with `pino`, suitable for audit queries.
-- `redact` rules in the logger mask `Authorization` headers and tokens.
-- No outbound call returns unvalidated user input directly.
-- PII lives in `contacts` and `leads` — add a retention cron matching your DPO policy before production (not included by default).
+- `GET /api/dashboard/overview`
+- `GET /api/dashboard/categories`
+- `GET /api/dashboard/team`
+- `GET /api/dashboard/leads`
+- `GET /api/dashboard/backlog`
+- `GET /api/export/leads.csv`           (range via `?start=&end=`)
+- `GET /api/export/conversations.csv`
 
----
+### Users
 
-## 12. Future enhancements
+- `GET  /api/users`
+- `POST /api/users`                     `{email,display_name,password,role,team_id?}` (admin)
+- `GET  /api/teams`
 
-Roadmap suggestions:
+### Admin
 
-1. **CRM integration** — sync `leads` to Salesforce / HubSpot via a background worker (Kafka or BullMQ).
-2. **Dashboard UI** — small Next.js admin app backed by `/admin/*` endpoints.
-3. **Agent inbox** — live conversation view with ability to send replies from the dashboard.
-4. **SLA alerts** — if `first_response_at` > target or a `needs_human=true` conversation is idle >15min, notify ops via Slack/SMS.
-5. **Campaign source tracking** — add `utm_source` to `conversations` using WhatsApp click-to-chat links (`wa.me?text=...`).
-6. **AI-assisted replies** — plug Anthropic Claude (via the Anthropic SDK) behind `services/conversationService.ts` to draft personalized acknowledgements while keeping the state machine deterministic.
-7. **Template messages** for outbound reactivation outside the 24h service window.
-8. **Language auto-learning** — use message history to refine the keyword dictionary.
+- `GET  /api/outbound?status=queued|waiting_24h|abandoned|failed|sent`
+- `GET  /api/crm/logs`
+- `POST /api/crm/retry`
+- `GET  /api/audit`
+
+### Webhook + health (public)
+
+- `GET /webhook` — Meta verification
+- `POST /webhook` — HMAC-validated, deduped
+- `GET /healthz`, `GET /readyz`
 
 ---
 
-## 13. Missing credentials & placeholders to fill
+## 11. Deployment
 
-The `.env.example` uses placeholders. Before production:
+Same topology as v1, plus:
 
-- `WHATSAPP_ACCESS_TOKEN` — generate a long-lived System User token.
-- `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID` — from Meta console.
-- `WHATSAPP_APP_SECRET` — from App Settings.
-- `WHATSAPP_VERIFY_TOKEN` — generate a random 32-byte string and register it in Meta.
-- `DATABASE_URL` — point at a managed Postgres.
-- Admin auth — decide on an auth layer for `/admin/*` (not wired, by design).
+- Terminate HTTPS at the load balancer; set `AUTH_COOKIE_SECURE=true`.
+- Populate `JWT_SECRET` from a secret manager — rotation invalidates all sessions.
+- The outbound worker is in-process by default. For horizontal scaling, run the web tier with `OUTBOUND_QUEUE_POLL_MS=0` (not implemented as a flag today — just comment out `startQueueWorker()` in `server.ts`) and run one dedicated worker container.
+- Weekly report + CRM retry schedulers also run in-process; for multi-replica deployments, disable them on all but one replica or run as CronJobs.
 
-Everything else has sensible defaults and the app will boot end-to-end with placeholders (though actual outbound messages will of course fail without a real token).
+---
+
+## 12. What you still need to add / wire up
+
+Credentials and integration decisions that still need to be supplied:
+
+- **Meta WhatsApp credentials** (`WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`).
+- **Approved re-engagement template name** in `WHATSAPP_DEFAULT_TEMPLATE_NAME` (create + submit for Meta review).
+- **Production `JWT_SECRET`**, served from your secret manager.
+- **CRM target** (`CRM_ADAPTER=webhook`, `CRM_WEBHOOK_URL`, `CRM_WEBHOOK_AUTH_HEADER`) or a custom adapter plugged into `services/crm/`.
+- **Anthropic API key** (`ANTHROPIC_API_KEY`) if you want Claude-backed suggestions; otherwise the heuristic fallback runs without any external call.
+- **Change the demo user passwords** (`SEED_DEFAULT_PASSWORD` + rotate `admin@jabalomar.local`).
+- **Admin/TLS proxy decisions**: HTTPS termination, IP allowlist for `/webhook`, WAF.
+- **Weekly-report delivery** (email/Slack) — currently only written to disk + persisted in `weekly_reports`.
+
+---
+
+## 13. Future roadmap (not yet implemented)
+
+- Rich media replies (images, documents, location).
+- Supervisor queue ownership + SLA escalations to Slack/SMS.
+- Full text + vector search over `messages`.
+- Campaign source tracking via `wa.me?text=...` click-through IDs.
+- Per-team SLA rules, skill-based routing.
+- Multi-tenant hardening.
 
 ---
 

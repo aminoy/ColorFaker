@@ -27,15 +27,36 @@ export interface Contact {
   metadata: Record<string, unknown>;
 }
 
+export type OperationalStatus =
+  | "new"
+  | "bot_handled"
+  | "pending_human"
+  | "in_progress"
+  | "waiting_on_customer"
+  | "resolved"
+  | "archived"
+  // Legacy values from v1 schema; still valid strings.
+  | "open"
+  | "closed";
+
+export type Priority = "low" | "normal" | "high" | "urgent";
+
 export interface Conversation {
   id: number;
   contact_id: number;
   category_code: CategoryCode | null;
   state: ConversationState;
   language: Language | null;
-  status: "open" | "closed" | "archived";
+  status: OperationalStatus;
   needs_human: boolean;
   assigned_agent: string | null;
+  priority: Priority;
+  assignee_id: number | null;
+  team_id: number | null;
+  first_response_due_at: Date | null;
+  resolution_due_at: Date | null;
+  unread_count: number;
+  last_customer_message_at: Date | null;
   started_at: Date;
   first_response_at: Date | null;
   last_message_at: Date;

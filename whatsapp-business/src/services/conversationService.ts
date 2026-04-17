@@ -19,6 +19,12 @@ import { transition, type BotAction } from "../state/stateMachine";
 import * as tpl from "./templates";
 import { whatsappClient } from "./whatsappClient";
 import type { InboundTextMessage, Language } from "../types/domain";
+import {
+  incrementUnread,
+  setOperationalStatus
+} from "../models/conversations";
+import { applyDeadlines } from "./sla";
+import { syncLeadAsync } from "./crm/crmDispatcher";
 
 export interface ConversationDeps {
   sendText: (to: string, body: string) => Promise<{ messages: { id: string }[] }>;
@@ -82,6 +88,21 @@ export async function handleInboundText(
     language: language ?? undefined
   });
 
+  // Operational status transitions used by the inbox.
+  if (decision.needsHuman) {
+    await setOperationalStatus(conversation.id, "pending_human");
+  } else if (decision.category) {
+    await setOperationalStatus(conversation.id, "bot_handled");
+  }
+
+  // Count this inbound as unread from an operator's point of view.
+  await incrementUnread(conversation.id, 1);
+
+  // Compute / refresh SLA deadlines now that we have a category.
+  if (decision.category) {
+    await applyDeadlines(conversation.id);
+  }
+
   if (decision.needsHuman) {
     await recordHandoff(
       conversation.id,
@@ -107,7 +128,7 @@ export async function handleInboundText(
       fields.notes ||
       decision.category === "general_inquiry"
     ) {
-      await upsertLead({
+      const leadId = await upsertLead({
         conversationId: conversation.id,
         contactId: contact.id,
         categoryCode: decision.category,
@@ -123,6 +144,8 @@ export async function handleInboundText(
         notes: fields.notes ?? null,
         rawFields: { extracted: fields, last_message: msg.text }
       });
+      // Fire-and-forget CRM sync; retries are managed by the dispatcher.
+      syncLeadAsync(leadId, conversation.id).catch(() => undefined);
     }
   }
 

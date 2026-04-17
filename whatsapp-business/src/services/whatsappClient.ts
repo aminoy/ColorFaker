@@ -19,6 +19,13 @@ export interface SendInteractiveListArgs {
   }>;
 }
 
+export interface SendTemplateArgs {
+  to: string;
+  templateName: string;
+  languageCode: string;         // e.g. "ar", "en_US"
+  bodyParameters?: string[];    // positional {{1}}, {{2}}, ...
+}
+
 export interface WhatsAppSendResponse {
   messages: Array<{ id: string }>;
   contacts: Array<{ input: string; wa_id: string }>;
@@ -72,6 +79,48 @@ export class WhatsAppClient {
       }
     };
     return this.postWithRetry(payload);
+  }
+
+  async sendTemplate(args: SendTemplateArgs): Promise<WhatsAppSendResponse> {
+    const payload: Record<string, unknown> = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: args.to,
+      type: "template",
+      template: {
+        name: args.templateName,
+        language: { code: args.languageCode },
+        components:
+          args.bodyParameters && args.bodyParameters.length
+            ? [
+                {
+                  type: "body",
+                  parameters: args.bodyParameters.map((t) => ({ type: "text", text: t }))
+                }
+              ]
+            : []
+      }
+    };
+    return this.postWithRetry(payload);
+  }
+
+  /**
+   * Low-level send returning the axios response so callers can classify errors.
+   * Used by the outbound queue worker which needs Meta's error codes.
+   */
+  async sendRaw(
+    payload: unknown
+  ): Promise<{ status: number; data: unknown; ok: boolean }> {
+    try {
+      const resp = await this.http.post(this.url, payload);
+      return { status: resp.status, data: resp.data, ok: true };
+    } catch (err) {
+      const axerr = err as AxiosError;
+      if (axerr.response) {
+        return { status: axerr.response.status, data: axerr.response.data, ok: false };
+      }
+      return { status: 0, data: { error: { message: axerr.message } }, ok: false };
+    }
   }
 
   private async postWithRetry(

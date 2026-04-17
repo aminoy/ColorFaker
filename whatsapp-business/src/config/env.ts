@@ -31,7 +31,34 @@ const schema = z.object({
 
   COMPANY_NAME_AR: z.string().default("شركة جبل عمر للتطوير"),
   COMPANY_NAME_EN: z.string().default("Jabal Omar Development Company"),
-  VENDOR_PORTAL_URL: z.string().url().default("https://jabalomar.com.sa/en/vendors-portal/")
+  VENDOR_PORTAL_URL: z.string().url().default("https://jabalomar.com.sa/en/vendors-portal/"),
+
+  // Auth
+  JWT_SECRET: z.string().min(16).default("dev_only_jwt_secret_please_rotate__________"),
+  JWT_TTL_SECONDS: z.coerce.number().int().positive().default(60 * 60 * 8),
+  AUTH_COOKIE_NAME: z.string().default("jo_auth"),
+  AUTH_COOKIE_SECURE: z.coerce.boolean().default(false),
+  LOGIN_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
+  LOGIN_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
+
+  // Outbound queue + 24h window
+  OUTBOUND_QUEUE_POLL_MS: z.coerce.number().int().positive().default(2_000),
+  OUTBOUND_QUEUE_BATCH_SIZE: z.coerce.number().int().positive().default(10),
+  OUTBOUND_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  WHATSAPP_SERVICE_WINDOW_HOURS: z.coerce.number().int().positive().default(24),
+  WHATSAPP_DEFAULT_TEMPLATE_NAME: z.string().default(""),
+  WHATSAPP_DEFAULT_TEMPLATE_LANG: z.string().default("ar"),
+
+  // CRM
+  CRM_ADAPTER: z.enum(["mock", "webhook", "disabled"]).default("mock"),
+  CRM_WEBHOOK_URL: z.string().optional(),
+  CRM_WEBHOOK_AUTH_HEADER: z.string().optional(),
+  CRM_RETRY_MAX: z.coerce.number().int().positive().default(5),
+
+  // AI
+  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_MODEL: z.string().default("claude-sonnet-4-6"),
+  AI_ASSIST_ENABLED: z.coerce.boolean().default(true)
 });
 
 export type AppEnv = z.infer<typeof schema>;
