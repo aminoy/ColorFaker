@@ -4,14 +4,17 @@ import rateLimit from "express-rate-limit";
 import express from "express";
 import { z } from "zod";
 import { env } from "../config/env";
-import { requireAuth } from "../middleware/auth";
+import { requireAuth, requireRole } from "../middleware/auth";
 import {
   findUserByEmail,
+  findUserById,
+  hashPassword,
   issueToken,
   recordLoginSuccess,
   verifyPassword
 } from "../services/auth";
 import { fromRequest, recordAudit } from "../services/audit";
+import { query } from "../db/pool";
 
 export const authRouter = Router();
 
@@ -104,3 +107,77 @@ authRouter.get("/me", requireAuth, (req, res) => {
     team_id: u.team_id
   });
 });
+
+// --- Self-service password change --------------------------------
+authRouter.post(
+  "/password",
+  requireAuth,
+  express.json({ limit: "8kb" }),
+  async (req, res) => {
+    const parsed = z
+      .object({
+        current_password: z.string().min(1),
+        new_password: z.string().min(8).max(128)
+      })
+      .safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_body" });
+      return;
+    }
+    const me = req.user!;
+    const full = await findUserByEmail(me.email);
+    if (!full || !verifyPassword(parsed.data.current_password, full.password_hash)) {
+      await recordAudit(
+        fromRequest(req, "password_change_failed", {
+          entityType: "user",
+          entityId: me.id
+        })
+      );
+      res.status(401).json({ error: "invalid_credentials" });
+      return;
+    }
+    await query(
+      `UPDATE users SET password_hash = $2, password_changed_at = NOW() WHERE id = $1`,
+      [me.id, hashPassword(parsed.data.new_password)]
+    );
+    await recordAudit(
+      fromRequest(req, "password_changed", { entityType: "user", entityId: me.id })
+    );
+    res.json({ ok: true });
+  }
+);
+
+// --- Admin force-reset of another user's password ----------------
+authRouter.post(
+  "/users/:id/reset-password",
+  requireAuth,
+  requireRole("admin"),
+  express.json({ limit: "8kb" }),
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const parsed = z
+      .object({ new_password: z.string().min(8).max(128) })
+      .safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_body" });
+      return;
+    }
+    const target = await findUserById(id);
+    if (!target) {
+      res.status(404).json({ error: "not_found" });
+      return;
+    }
+    await query(
+      `UPDATE users SET password_hash = $2, password_changed_at = NOW() WHERE id = $1`,
+      [id, hashPassword(parsed.data.new_password)]
+    );
+    await recordAudit(
+      fromRequest(req, "password_reset", {
+        entityType: "user",
+        entityId: id,
+        metadata: { target_email: target.email }
+      })
+    );
+    res.json({ ok: true });
+  }
+);

@@ -54,9 +54,11 @@ export async function handleInboundText(
   const inserted = await insertInboundMessage({
     conversationId: conversation.id,
     waMessageId: msg.wa_message_id,
-    messageType: "text",
+    messageType: msg.message_type ?? "text",
     body: msg.text,
-    payload: msg.raw
+    payload: msg.raw,
+    media: msg.media,
+    location: msg.location
   });
 
   if (!inserted) {

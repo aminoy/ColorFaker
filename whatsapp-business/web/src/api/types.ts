@@ -52,6 +52,14 @@ export interface TimelineResponse {
     body: string | null;
     created_at: string;
     message_type: string;
+    media_id?: string | null;
+    media_mime?: string | null;
+    media_filename?: string | null;
+    media_caption?: string | null;
+    location_lat?: number | null;
+    location_lng?: number | null;
+    location_name?: string | null;
+    location_address?: string | null;
     author_email?: string | null;
     author_name?: string | null;
   }>;
@@ -84,4 +92,14 @@ export interface User {
   display_name: string;
   role: Role;
   team_id: number | null;
+}
+
+export interface CannedReply {
+  id: number;
+  code: string;
+  language: "ar" | "en";
+  title: string;
+  body: string;
+  category_code: string | null;
+  is_active: boolean;
 }

@@ -55,7 +55,24 @@ export const STRINGS = {
     note: "الملاحظة",
     done: "مكتملة",
     overdue: "متأخرة",
-    language: "اللغة"
+    language: "اللغة",
+    canned_replies: "الردود الجاهزة",
+    insert_snippet: "إدراج رد جاهز",
+    bulk_assign: "تعيين جماعي",
+    bulk_status: "تغيير الحالة جماعيًا",
+    bulk_priority: "تغيير الأولوية جماعيًا",
+    selected: "محدد",
+    change_password: "تغيير كلمة المرور",
+    current_password: "كلمة المرور الحالية",
+    new_password: "كلمة المرور الجديدة",
+    password_changed: "تم تغيير كلمة المرور",
+    password_change_failed: "فشل تغيير كلمة المرور",
+    image: "صورة",
+    document: "مستند",
+    audio: "مقطع صوتي",
+    video: "فيديو",
+    location: "موقع",
+    sticker: "ملصق"
   },
   en: {
     app_title: "Jabal Omar · WhatsApp Console",
@@ -108,7 +125,24 @@ export const STRINGS = {
     note: "Note",
     done: "Done",
     overdue: "Overdue",
-    language: "Language"
+    language: "Language",
+    canned_replies: "Canned replies",
+    insert_snippet: "Insert snippet",
+    bulk_assign: "Bulk assign",
+    bulk_status: "Bulk set status",
+    bulk_priority: "Bulk set priority",
+    selected: "selected",
+    change_password: "Change password",
+    current_password: "Current password",
+    new_password: "New password",
+    password_changed: "Password changed",
+    password_change_failed: "Password change failed",
+    image: "image",
+    document: "document",
+    audio: "audio",
+    video: "video",
+    location: "location",
+    sticker: "sticker"
   }
 } satisfies Record<Locale, Record<string, string>>;
 

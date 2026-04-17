@@ -34,6 +34,13 @@ import {
 import { suggest } from "../services/aiAssist";
 import { getServiceWindowStatus } from "../services/serviceWindow";
 import { retryFailedSyncs } from "../services/crm/crmDispatcher";
+import {
+  deleteCannedReply,
+  listCannedReplies,
+  upsertCannedReply
+} from "../models/cannedReplies";
+import { runSlaNotifierOnce } from "../services/slaNotifier";
+import type { CategoryCode, Language } from "../types/domain";
 
 export const apiRouter = Router();
 
@@ -526,5 +533,142 @@ apiRouter.post(
       })
     );
     res.json(out);
+  }
+);
+
+// --- Canned replies -----------------------------------------------
+apiRouter.get("/canned-replies", async (req, res) => {
+  const rows = await listCannedReplies({
+    language: (req.query.language as Language | undefined) ?? undefined,
+    category: (req.query.category as CategoryCode | undefined) ?? undefined,
+    onlyActive: req.query.all !== "true"
+  });
+  res.json({ canned: rows });
+});
+
+apiRouter.post(
+  "/canned-replies",
+  requireRole("admin", "manager"),
+  async (req, res) => {
+    const schema = z.object({
+      id: z.number().int().optional(),
+      code: z.string().min(1).max(64).regex(/^[a-zA-Z0-9_-]+$/),
+      language: z.enum(["ar", "en"]),
+      title: z.string().min(1).max(200),
+      body: z.string().min(1).max(4000),
+      category_code: z.enum(["hotel_booking","retail_leasing","vendor","general_inquiry"]).nullable().optional(),
+      is_active: z.boolean().optional()
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_body", details: parsed.error.flatten() });
+      return;
+    }
+    const row = await upsertCannedReply({
+      ...parsed.data,
+      createdBy: req.user!.id
+    });
+    await recordAudit(
+      fromRequest(req, parsed.data.id ? "canned_reply_updated" : "canned_reply_created", {
+        entityType: "canned_reply",
+        entityId: row.id,
+        metadata: { code: row.code, language: row.language }
+      })
+    );
+    res.status(201).json({ canned: row });
+  }
+);
+
+apiRouter.delete(
+  "/canned-replies/:id",
+  requireRole("admin", "manager"),
+  async (req, res) => {
+    const id = Number(req.params.id);
+    await deleteCannedReply(id);
+    await recordAudit(
+      fromRequest(req, "canned_reply_deleted", { entityType: "canned_reply", entityId: id })
+    );
+    res.json({ ok: true });
+  }
+);
+
+// --- Bulk inbox actions -------------------------------------------
+apiRouter.post(
+  "/inbox/bulk",
+  requireRole("admin", "manager"),
+  async (req, res) => {
+    const schema = z.object({
+      conversation_ids: z.array(z.number().int().positive()).min(1).max(500),
+      action: z.enum(["assign", "set_status", "set_priority"]),
+      assignee_id: z.number().int().nullable().optional(),
+      status: z.enum([
+        "new","bot_handled","pending_human","in_progress",
+        "waiting_on_customer","resolved","archived"
+      ]).optional(),
+      priority: z.enum(["low","normal","high","urgent"]).optional()
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_body", details: parsed.error.flatten() });
+      return;
+    }
+    const ids = parsed.data.conversation_ids;
+    let affected = 0;
+    if (parsed.data.action === "assign") {
+      const r = await query(
+        `UPDATE conversations SET assignee_id = $2 WHERE id = ANY($1::bigint[])`,
+        [ids, parsed.data.assignee_id ?? null]
+      );
+      affected = r.rowCount;
+      // Record individual assignment rows for audit trail.
+      for (const id of ids) {
+        await query(
+          `INSERT INTO assignments (conversation_id, assignee_id, assigned_by, reason)
+           VALUES ($1,$2,$3,'bulk')`,
+          [id, parsed.data.assignee_id ?? null, req.user!.id]
+        );
+      }
+    } else if (parsed.data.action === "set_status" && parsed.data.status) {
+      const r = await query(
+        `UPDATE conversations
+            SET status = $2,
+                resolved_at = CASE WHEN $2 IN ('resolved','closed') THEN NOW() ELSE resolved_at END
+          WHERE id = ANY($1::bigint[])`,
+        [ids, parsed.data.status]
+      );
+      affected = r.rowCount;
+    } else if (parsed.data.action === "set_priority" && parsed.data.priority) {
+      const r = await query(
+        `UPDATE conversations SET priority = $2 WHERE id = ANY($1::bigint[])`,
+        [ids, parsed.data.priority]
+      );
+      affected = r.rowCount;
+    }
+    await recordAudit(
+      fromRequest(req, "bulk_action", {
+        entityType: "conversation",
+        metadata: {
+          action: parsed.data.action,
+          count: ids.length,
+          affected,
+          target: {
+            assignee_id: parsed.data.assignee_id,
+            status: parsed.data.status,
+            priority: parsed.data.priority
+          }
+        }
+      })
+    );
+    res.json({ affected });
+  }
+);
+
+// --- SLA breach notifier trigger ----------------------------------
+apiRouter.post(
+  "/sla/notify-now",
+  requireRole("admin", "manager"),
+  async (_req, res) => {
+    const n = await runSlaNotifierOnce();
+    res.json({ notified: n });
   }
 );

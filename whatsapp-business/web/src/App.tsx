@@ -10,6 +10,8 @@ import { FollowUpsPage } from "./pages/FollowUpsPage";
 import { SlaPage } from "./pages/SlaPage";
 import { AuditPage } from "./pages/AuditPage";
 import { UsersPage } from "./pages/UsersPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { SnippetsPage } from "./pages/SnippetsPage";
 
 export function App() {
   const { t, locale, setLocale } = useI18n();
@@ -55,8 +57,10 @@ export function App() {
         {navItem("/dashboard", t("dashboard"))}
         {navItem("/follow-ups", t("follow_ups"))}
         {navItem("/sla", t("sla_breaches"))}
+        {(me.role === "admin" || me.role === "manager") && navItem("/snippets", t("canned_replies"))}
         {(me.role === "admin" || me.role === "manager") && navItem("/audit", t("audit"))}
         {me.role === "admin" && navItem("/users", t("users"))}
+        {navItem("/settings", t("change_password"))}
         <div className="meta">
           <div>{me.display_name} · <span className="muted">{me.role}</span></div>
           <div style={{ marginTop: 6 }}>
@@ -76,6 +80,8 @@ export function App() {
           <Route path="/sla" element={<SlaPage />} />
           <Route path="/audit" element={<AuditPage />} />
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/snippets" element={<SnippetsPage />} />
           <Route path="*" element={<Navigate to="/inbox" replace />} />
         </Routes>
       </main>

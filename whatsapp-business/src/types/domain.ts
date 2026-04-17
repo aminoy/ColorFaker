@@ -65,11 +65,38 @@ export interface Conversation {
   tags: string[];
 }
 
+export type InboundMessageType =
+  | "text"
+  | "interactive"
+  | "image"
+  | "document"
+  | "audio"
+  | "video"
+  | "sticker"
+  | "location";
+
+export interface InboundMedia {
+  id?: string;
+  mime?: string;
+  caption?: string;
+  filename?: string;
+}
+
+export interface InboundLocation {
+  latitude?: number;
+  longitude?: number;
+  name?: string;
+  address?: string;
+}
+
 export interface InboundTextMessage {
   wa_message_id: string;
   from: string;               // wa_id
   profile_name?: string;
-  text: string;
+  text: string;               // human-readable representation for logs/routing
+  message_type: InboundMessageType;
+  media?: InboundMedia;
+  location?: InboundLocation;
   timestamp: Date;
   raw: Record<string, unknown>;
 }

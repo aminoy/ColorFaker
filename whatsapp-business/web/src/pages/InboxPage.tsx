@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
-import type { InboxRow, Me, TimelineResponse, User } from "../api/types";
+import type { CannedReply, InboxRow, Me, TimelineResponse, User } from "../api/types";
 import { useI18n } from "../i18n/strings";
 
 const CATEGORIES = ["hotel_booking", "retail_leasing", "vendor", "general_inquiry"];
@@ -16,6 +16,8 @@ export function InboxPage({ me }: { me: Me }) {
 
   const [rows, setRows] = useState<InboxRow[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const canBulk = me.role === "admin" || me.role === "manager";
   const [filters, setFilters] = useState({
     category: "",
     status: "",
@@ -46,9 +48,65 @@ export function InboxPage({ me }: { me: Me }) {
     return () => clearInterval(tm);
   }, [load]);
 
+  async function bulkAction(
+    action: "assign" | "set_status" | "set_priority",
+    value: number | string | null
+  ) {
+    if (selected.size === 0) return;
+    const body: Record<string, unknown> = {
+      conversation_ids: Array.from(selected),
+      action
+    };
+    if (action === "assign") body.assignee_id = value === null ? null : Number(value);
+    if (action === "set_status") body.status = value;
+    if (action === "set_priority") body.priority = value;
+    await api.post("/api/inbox/bulk", body);
+    setSelected(new Set());
+    load();
+  }
+
+  function toggleSelect(id: number) {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setSelected(next);
+  }
+
   return (
     <div className="inbox">
       <div className="pane">
+        {canBulk && selected.size > 0 && (
+          <div className="filters" style={{ background: "var(--panel-2)" }}>
+            <b>{selected.size} {t("selected")}</b>
+            <select
+              defaultValue=""
+              onChange={(e) => { if (e.target.value) bulkAction("set_status", e.target.value); e.target.value = ""; }}
+            >
+              <option value="">{t("bulk_status")}</option>
+              {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select
+              defaultValue=""
+              onChange={(e) => { if (e.target.value) bulkAction("set_priority", e.target.value); e.target.value = ""; }}
+            >
+              <option value="">{t("bulk_priority")}</option>
+              {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <select
+              defaultValue=""
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === "") return;
+                bulkAction("assign", v === "unassigned" ? null : v);
+                e.target.value = "";
+              }}
+            >
+              <option value="">{t("bulk_assign")}</option>
+              <option value="unassigned">— {t("unassigned")} —</option>
+              {users.map((u) => <option key={u.id} value={u.id}>{u.display_name}</option>)}
+            </select>
+            <button className="btn small" onClick={() => setSelected(new Set())}>✕</button>
+          </div>
+        )}
         <div className="filters">
           <input
             placeholder={t("search_placeholder")}
@@ -86,10 +144,24 @@ export function InboxPage({ me }: { me: Me }) {
           <div
             key={r.id}
             className={`conv-item ${selectedId === r.id ? "active" : ""}`}
-            onClick={() => navigate(`/inbox/${r.id}`)}
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (target.tagName === "INPUT") return;
+              navigate(`/inbox/${r.id}`);
+            }}
           >
             <div className="who">
-              <span>{r.contact_name || r.wa_id}</span>
+              <span>
+                {canBulk && (
+                  <input
+                    type="checkbox"
+                    checked={selected.has(r.id)}
+                    onChange={() => toggleSelect(r.id)}
+                    style={{ marginInlineEnd: 8 }}
+                  />
+                )}
+                {r.contact_name || r.wa_id}
+              </span>
               <span className="muted">{new Date(r.last_message_at).toLocaleString()}</span>
             </div>
             <div className="snippet">{(r.last_message_body ?? "").slice(0, 80)}</div>
@@ -231,7 +303,7 @@ function ThreadPane({
         <div className="thread-body">
           {data.messages.map((m) => (
             <div key={m.id} className={`msg ${m.direction}`}>
-              <div>{m.body}</div>
+              <MessageContent msg={m} />
               <div className="when">
                 {new Date(m.created_at).toLocaleString()}
                 {m.author_name ? ` · ${m.author_name}` : ""}
@@ -241,6 +313,10 @@ function ThreadPane({
         </div>
         {canWrite && (
           <div className="composer">
+            <CannedReplyPicker
+              category={conv.category_code as string | null}
+              onPick={(body) => setReply((r) => (r ? `${r}\n${body}` : body))}
+            />
             <textarea
               value={reply}
               placeholder={t("send_reply")}
@@ -408,4 +484,87 @@ function FollowUpCreator({
       <button className="btn small" onClick={create}>+ follow-up</button>
     </div>
   );
+}
+
+function CannedReplyPicker({
+  category,
+  onPick
+}: {
+  category: string | null;
+  onPick: (body: string) => void;
+}) {
+  const { t, locale } = useI18n();
+  const [items, setItems] = useState<CannedReply[]>([]);
+  useEffect(() => {
+    const qs = new URLSearchParams();
+    qs.set("language", locale);
+    if (category) qs.set("category", category);
+    api.get<{ canned: CannedReply[] }>(`/api/canned-replies?${qs.toString()}`)
+      .then((r) => setItems(r.canned))
+      .catch(() => setItems([]));
+  }, [category, locale]);
+
+  if (items.length === 0) return null;
+  return (
+    <div className="row" style={{ alignItems: "center", gap: 4 }}>
+      <span className="muted" style={{ fontSize: 12 }}>{t("canned_replies")}:</span>
+      <select
+        defaultValue=""
+        onChange={(e) => {
+          const id = Number(e.target.value);
+          const row = items.find((i) => i.id === id);
+          if (row) onPick(row.body);
+          e.target.value = "";
+        }}
+      >
+        <option value="">— {t("insert_snippet")} —</option>
+        {items.map((i) => (
+          <option key={i.id} value={i.id}>
+            /{i.code} · {i.title}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function MessageContent({
+  msg
+}: {
+  msg: TimelineResponse["messages"][number];
+}) {
+  const { t } = useI18n();
+  if (msg.message_type === "location" && (msg.location_lat || msg.location_lng)) {
+    const url = `https://maps.google.com/?q=${msg.location_lat},${msg.location_lng}`;
+    return (
+      <div>
+        <div>📍 {t("location")}: {msg.location_name ?? "—"}</div>
+        {msg.location_address && <div className="muted">{msg.location_address}</div>}
+        <a href={url} target="_blank" rel="noreferrer" style={{ fontSize: 12 }}>
+          {msg.location_lat}, {msg.location_lng}
+        </a>
+      </div>
+    );
+  }
+  if (msg.message_type === "image" || msg.message_type === "document" ||
+      msg.message_type === "audio" || msg.message_type === "video" ||
+      msg.message_type === "sticker") {
+    const icon =
+      msg.message_type === "image" ? "🖼️" :
+      msg.message_type === "document" ? "📄" :
+      msg.message_type === "audio" ? "🎙️" :
+      msg.message_type === "video" ? "🎬" : "🏷️";
+    return (
+      <div>
+        <div>
+          {icon} <b>{t(msg.message_type as "image")}</b>
+          {msg.media_filename && <> — {msg.media_filename}</>}
+          {msg.media_mime && <span className="muted"> ({msg.media_mime})</span>}
+        </div>
+        {msg.media_caption && <div>{msg.media_caption}</div>}
+        {msg.media_id && <div className="muted" style={{ fontSize: 11 }}>media_id: {msg.media_id}</div>}
+      </div>
+    );
+  }
+  return <div>{msg.body}</div>;
 }

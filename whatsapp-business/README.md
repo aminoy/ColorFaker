@@ -40,13 +40,14 @@ whatsapp-business/
 │   ├── jobs/                     # schedulers (weekly report, CRM retry)
 │   └── server.ts                 # entry
 ├── web/                          # Internal operator console (React + TS + Vite)
-│   └── src/{App,pages,api,i18n}  # Inbox, Dashboard, Follow-ups, SLA, Audit, Users
+│   └── src/{App,pages,api,i18n}  # Inbox, Dashboard, Follow-ups, SLA, Audit, Users, Snippets, Settings
 ├── migrations/
 │   ├── 001_init.sql              # contacts, conversations, messages, leads, handoff, weekly_reports
-│   └── 002_inbox_auth_sla.sql    # users, teams, assignments, notes, sla_rules, follow_ups,
-│                                 # audit_logs, crm_sync_logs, outbound_queue, ai_suggestions
-├── seeds/                        # categories, teams, SLA rules (users seeded by src/db/seed.ts)
-├── tests/                        # 70 unit tests (see §9)
+│   ├── 002_inbox_auth_sla.sql    # users, teams, assignments, notes, sla_rules, follow_ups,
+│   │                             # audit_logs, crm_sync_logs, outbound_queue, ai_suggestions
+│   └── 003_media_snippets_alerts.sql  # media/location cols, canned_replies, sla_breach_events
+├── seeds/                        # categories, teams, SLA rules, default canned replies (users via src/db/seed.ts)
+├── tests/                        # 73 unit tests (see §9)
 ├── Dockerfile                    # multi-stage: builds web + backend, runs migrations + seeds
 ├── docker-compose.yml
 └── .env.example
@@ -264,16 +265,66 @@ Test coverage spans:
 - **CRM** (mock capture + simulated transient failures + backoff monotonicity).
 - **Report formatters** (CSV/JSON/Markdown; week-boundary math).
 - **Dashboard CSV** (escaping, empty rows).
+- **Inbound media** (image captions, document filename/mime, location coordinates).
+
+---
+
+## 9a. Rich media + operator productivity features
+
+**Inbound media**
+
+The webhook parser + message schema now preserve WhatsApp media and location events:
+
+| Meta `type` | Stored as                                             |
+| ----------- | ----------------------------------------------------- |
+| `image`     | `messages.media_id/mime/caption` + `message_type=image`    |
+| `document`  | `media_id/mime/filename/caption` + `message_type=document` |
+| `audio`, `video`, `sticker` | `media_id/mime/caption` + corresponding type |
+| `location`  | `location_lat/lng/name/address` + `message_type=location`  |
+
+The thread UI renders media placeholders + captions + filename + mime, and for locations shows a link to Google Maps. Downloading the actual media bytes via the Graph API (`/v20.0/{media_id}`) is deliberately left as a follow-up — add a small `/api/media/:id` proxy if you need to display images inline.
+
+**Canned replies (snippets)**
+
+Operators frequently need the same short answers (ask for dates, vendor portal link, leasing info …). The platform ships a `canned_replies` table + CRUD API + UI:
+
+- `GET  /api/canned-replies?language=ar&category=hotel_booking` — filtered list
+- `POST /api/canned-replies` — upsert (admin/manager)
+- `DELETE /api/canned-replies/:id` — admin/manager
+
+The composer in the inbox has an "Insert snippet" dropdown filtered by the current locale and the conversation's category. Eight default snippets are seeded in `seeds/003_seed.sql` (Arabic + English for each category).
+
+**Bulk actions**
+
+Admins and managers can select multiple rows in the inbox list and execute bulk actions:
+
+- `POST /api/inbox/bulk {conversation_ids, action: "assign"|"set_status"|"set_priority", assignee_id?, status?, priority?}`
+
+A single audit entry is recorded per bulk invocation; individual assignment rows are still written for history.
+
+**Self-service password change + admin reset**
+
+- `POST /auth/password {current_password, new_password}` — user must prove the old password. Audited as `password_changed` / `password_change_failed`.
+- `POST /auth/users/:id/reset-password {new_password}` — admin-only force reset, audited as `password_reset`.
+- UI exposes the self-service form via **Settings** in the nav.
+
+**SLA breach notifier**
+
+When `SLA_ALERTS_ENABLED=true`, a cron job (default: every 3 minutes) scans for open conversations that have just breached their `first_response_due_at` or `resolution_due_at` and **hasn't been alerted before**. It POSTs a Slack-compatible `{text: "..."}` payload to `SLA_ALERTS_WEBHOOK_URL`. Dedup is enforced by a UNIQUE index on `sla_breach_events(conversation_id, kind)` — the same breach is never announced twice.
+
+Admins/managers can trigger an immediate scan via `POST /api/sla/notify-now`.
 
 ---
 
 ## 10. HTTP surface (authenticated `/api/*` unless noted)
 
-### Auth (public)
+### Auth (public / self-service / admin)
 
 - `POST /auth/login` — body `{email, password}`. Sets cookie, returns `{token, csrf, user}`.
 - `POST /auth/logout` — clears cookies.
 - `GET /auth/me` — current user.
+- `POST /auth/password` — `{current_password, new_password}` (authenticated; self-service).
+- `POST /auth/users/:id/reset-password` — `{new_password}` (admin force reset).
 
 ### Inbox + thread
 
@@ -316,12 +367,23 @@ Test coverage spans:
 - `POST /api/users`                     `{email,display_name,password,role,team_id?}` (admin)
 - `GET  /api/teams`
 
+### Bulk inbox actions
+
+- `POST /api/inbox/bulk` — `{conversation_ids, action, assignee_id?, status?, priority?}` (admin/manager)
+
+### Canned replies
+
+- `GET    /api/canned-replies?language=&category=&all=`
+- `POST   /api/canned-replies` (admin/manager)
+- `DELETE /api/canned-replies/:id` (admin/manager)
+
 ### Admin
 
 - `GET  /api/outbound?status=queued|waiting_24h|abandoned|failed|sent`
 - `GET  /api/crm/logs`
 - `POST /api/crm/retry`
 - `GET  /api/audit`
+- `POST /api/sla/notify-now` — run the SLA breach notifier synchronously
 
 ### Webhook + health (public)
 

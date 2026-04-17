@@ -19,11 +19,17 @@ export async function insertInboundMessage(args: {
   messageType: string;
   body: string | null;
   payload: Record<string, unknown>;
+  media?: { id?: string; mime?: string; caption?: string; filename?: string };
+  location?: { latitude?: number; longitude?: number; name?: string; address?: string };
 }): Promise<MessageRow | null> {
   const { rows } = await query<MessageRow>(
     `INSERT INTO messages
-      (conversation_id, wa_message_id, direction, message_type, body, payload, status)
-     VALUES ($1, $2, 'inbound', $3, $4, $5::jsonb, 'received')
+      (conversation_id, wa_message_id, direction, message_type, body, payload, status,
+       media_id, media_mime, media_filename, media_caption,
+       location_lat, location_lng, location_name, location_address)
+     VALUES ($1, $2, 'inbound', $3, $4, $5::jsonb, 'received',
+             $6, $7, $8, $9,
+             $10, $11, $12, $13)
      ON CONFLICT (wa_message_id) DO NOTHING
      RETURNING *`,
     [
@@ -31,7 +37,15 @@ export async function insertInboundMessage(args: {
       args.waMessageId,
       args.messageType,
       args.body,
-      JSON.stringify(args.payload)
+      JSON.stringify(args.payload),
+      args.media?.id ?? null,
+      args.media?.mime ?? null,
+      args.media?.filename ?? null,
+      args.media?.caption ?? null,
+      args.location?.latitude ?? null,
+      args.location?.longitude ?? null,
+      args.location?.name ?? null,
+      args.location?.address ?? null
     ]
   );
   return rows[0] ?? null;

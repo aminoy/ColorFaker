@@ -4,6 +4,7 @@ import { logger } from "./config/logger";
 import { startWeeklyReportScheduler } from "./jobs/scheduler";
 import { startQueueWorker } from "./services/outboundQueue";
 import { startCrmRetryScheduler } from "./jobs/crmRetry";
+import { startSlaNotifierScheduler } from "./jobs/slaNotifierJob";
 
 async function main() {
   const app = createApp();
@@ -14,6 +15,7 @@ async function main() {
   startWeeklyReportScheduler();
   startQueueWorker();
   startCrmRetryScheduler();
+  startSlaNotifierScheduler();
 }
 
 main().catch((err) => {

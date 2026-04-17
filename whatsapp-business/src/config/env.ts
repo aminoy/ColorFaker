@@ -58,7 +58,12 @@ const schema = z.object({
   // AI
   ANTHROPIC_API_KEY: z.string().optional(),
   ANTHROPIC_MODEL: z.string().default("claude-sonnet-4-6"),
-  AI_ASSIST_ENABLED: z.coerce.boolean().default(true)
+  AI_ASSIST_ENABLED: z.coerce.boolean().default(true),
+
+  // SLA notifier (Slack-compatible incoming-webhook endpoint).
+  SLA_ALERTS_ENABLED: z.coerce.boolean().default(false),
+  SLA_ALERTS_WEBHOOK_URL: z.string().optional(),
+  SLA_ALERTS_POLL_CRON: z.string().default("*/3 * * * *")
 });
 
 export type AppEnv = z.infer<typeof schema>;

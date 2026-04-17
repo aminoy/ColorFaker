@@ -16,6 +16,7 @@ describe("webhookParser", () => {
     expect(inboundTextMessages[0].text).toContain("حجز");
     expect(inboundTextMessages[0].from).toBeTruthy();
     expect(inboundTextMessages[0].wa_message_id).toBeTruthy();
+    expect(inboundTextMessages[0].message_type).toBe("text");
   });
 
   it("handles interactive list replies", () => {
