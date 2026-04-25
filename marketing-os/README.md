@@ -98,3 +98,13 @@ Use concise prompts that include:
 - Weekly insights memo format
 
 Once these are in place, the team can run repeatable growth loops with low coordination overhead.
+
+## Quick Start
+
+For a runnable workflow, see `HOW-TO-RUN.md` and use:
+
+```bash
+./marketing-os/scripts/run-weekly-cycle.sh --brief marketing-os/examples/initiative-brief.md --dry-run
+```
+
+Then run without `--dry-run` to generate orchestrator + specialist outputs.
