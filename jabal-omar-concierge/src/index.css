@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Jabal Omar Official Brand Palette ── */
+:root {
+  --jo-midnight:  #354d62;   /* Midnight Blue  */
+  --jo-emerald:   #4ab893;   /* Emerald Green  */
+  --jo-violet:    #6b4877;   /* Violet Dawn    */
+  --jo-redclay:   #df6a51;   /* Red Clay       */
+  --jo-herbal:    #8c9d6a;   /* Herbal Green   */
+  --jo-parchment: #e6e9e4;   /* Parchment      */
+}
+
+/* ── Dark theme (default) ── */
+:root {
+  --bg-screen:    #1c2d3a;
+  --bg-app:       #172636;
+  --bg-card:      rgba(255,255,255,0.05);
+  --bg-card2:     rgba(255,255,255,0.08);
+  --bg-nav:       #172636;
+  --text-1:       #f0f4f2;
+  --text-2:       rgba(240,244,242,0.65);
+  --text-3:       rgba(240,244,242,0.40);
+  --text-4:       rgba(240,244,242,0.25);
+  --border-card:  rgba(74,184,147,0.20);
+  --border-card2: rgba(74,184,147,0.30);
+  --gold:         #4ab893;   /* Emerald Green is the primary brand accent */
+  --transition:   background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ── Light mode (Parchment base) ── */
+[data-theme="light"] {
+  --bg-screen:    #e6e9e4;   /* Parchment      */
+  --bg-app:       #d5dbd2;
+  --bg-card:      rgba(255,255,255,0.80);
+  --bg-card2:     rgba(255,255,255,0.95);
+  --bg-nav:       #e6e9e4;
+  --text-1:       #1c2d3a;   /* Midnight Blue  */
+  --text-2:       rgba(28,45,58,0.70);
+  --text-3:       rgba(28,45,58,0.45);
+  --text-4:       rgba(28,45,58,0.28);
+  --border-card:  rgba(74,184,147,0.25);
+  --border-card2: rgba(74,184,147,0.35);
+  --gold:         #2e8066;   /* Darker emerald for light-mode contrast */
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-app);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply relative w-full max-w-md mx-auto overflow-hidden;
+    background: var(--bg-screen);
+    height: 100dvh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+  }
+
+  .screen-content {
+    @apply flex-1 overflow-y-auto overflow-x-hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Screen background — all screens use this class */
+  .screen-bg {
+    background: var(--bg-screen);
+    min-height: 100%;
+    transition: var(--transition);
+  }
+
+  .jo-gradient {
+    background: linear-gradient(135deg, #354d62, #4ab893);
+  }
+
+  .dark-gradient {
+    background: linear-gradient(180deg, #1c2d3a 0%, #0f1e2a 100%);
+  }
+
+  .card-glass {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-card);
+    transition: var(--transition);
+  }
+
+  .card-gold-border {
+    border: 1px solid var(--border-card2);
+    transition: var(--transition);
+  }
+
+  .text-gold { color: var(--gold); }
+  .bg-gold   { background-color: var(--gold); }
+
+  .btn-gold {
+    @apply font-semibold rounded-xl px-6 py-3 active:scale-95 transition-all duration-150 shadow-lg;
+    background: var(--gold);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(74,184,147,0.35);
+  }
+
+  .btn-outline-gold {
+    @apply font-semibold rounded-xl px-6 py-3 active:scale-95 transition-all duration-150;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+  }
+
+  .section-title {
+    @apply font-semibold text-lg mb-4;
+    color: var(--text-1);
+    font-family: 'Playfair Display', serif;
+  }
+
+  .nav-icon-label {
+    @apply text-[10px] mt-1 font-medium tracking-wide;
+  }
+}
+
+/* ── Light mode: global text overrides ── */
+.light-mode .text-white              { color: var(--text-1) !important; }
+.light-mode .text-white\/70          { color: var(--text-2) !important; }
+.light-mode .text-white\/60          { color: var(--text-2) !important; }
+.light-mode .text-white\/50          { color: var(--text-2) !important; }
+.light-mode .text-white\/40          { color: var(--text-3) !important; }
+.light-mode .text-white\/30          { color: var(--text-3) !important; }
+.light-mode .text-white\/25          { color: var(--text-4) !important; }
+.light-mode .text-white\/20          { color: var(--text-4) !important; }
+.light-mode .text-white\/10          { color: var(--text-4) !important; }
+
+/* Light mode: force screen backgrounds */
+.light-mode .screen-bg              { background: var(--bg-screen) !important; }
+
+/* Light mode: nav bar */
+.light-mode nav {
+  background: linear-gradient(0deg, var(--bg-nav) 0%, var(--bg-app) 100%) !important;
+  border-color: rgba(74,184,147,0.2) !important;
+}
+
+/* Custom scrollbar */
+.screen-content::-webkit-scrollbar { display: none; }
+.screen-content { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Slide transitions */
+.slide-up-enter { transform: translateY(100%); opacity: 0; }
+.slide-up-enter-active {
+  transform: translateY(0); opacity: 1;
+  transition: all 300ms ease-out;
+}
+.slide-up-exit { transform: translateY(0); opacity: 1; }
+.slide-up-exit-active {
+  transform: translateY(-20px); opacity: 0;
+  transition: all 200ms ease-in;
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(74,184,147,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Notification / status pulse — Emerald Green */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(74,184,147,0.5); }
+  50%       { box-shadow: 0 0 0 8px rgba(74,184,147,0);   }
+}
+.pulse-gold { animation: pulse-gold 2s infinite; }
