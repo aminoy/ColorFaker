@@ -5,6 +5,9 @@ import type {
   RetailStore,
 } from "../types";
 
+// Jabal Omar Towers, Makkah — anchor point for the indoor map
+export const JABAL_OMAR_CENTER = { lat: 21.4196, lng: 39.8242 } as const;
+
 export const restaurants: Restaurant[] = [
   {
     id: "r-saffron",
@@ -19,6 +22,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#3DAF8D", "#247760"],
     emoji: "🌿",
     zone: "Food Court · L2",
+    lat: 21.4202,
+    lng: 39.8248,
   },
   {
     id: "r-najd",
@@ -33,6 +38,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#374C5F", "#2C3E4F"],
     emoji: "☕️",
     zone: "Lobby · L1",
+    lat: 21.4199,
+    lng: 39.8237,
   },
   {
     id: "r-haramain",
@@ -47,6 +54,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#475F76", "#1F2C39"],
     emoji: "🔥",
     zone: "Terrace · L3",
+    lat: 21.4205,
+    lng: 39.8252,
   },
   {
     id: "r-azure",
@@ -61,6 +70,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#2F9577", "#3DAF8D"],
     emoji: "🍣",
     zone: "Sky Lounge · L4",
+    lat: 21.4210,
+    lng: 39.8228,
   },
   {
     id: "r-mokha",
@@ -75,6 +86,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#7FCFB4", "#3DAF8D"],
     emoji: "🥐",
     zone: "Promenade · L1",
+    lat: 21.4194,
+    lng: 39.8246,
   },
   {
     id: "r-marina",
@@ -89,6 +102,8 @@ export const restaurants: Restaurant[] = [
     gradient: ["#374C5F", "#647A93"],
     emoji: "🍔",
     zone: "Food Court · L2",
+    lat: 21.4186,
+    lng: 39.8254,
   },
 ];
 
@@ -105,6 +120,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#3DAF8D", "#2F9577"],
     emoji: "🪔",
     zone: "Boulevard · L1",
+    lat: 21.4200,
+    lng: 39.8236,
   },
   {
     id: "s-noor",
@@ -118,6 +135,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#374C5F", "#1F2C39"],
     emoji: "👗",
     zone: "Promenade · L2",
+    lat: 21.4190,
+    lng: 39.8251,
   },
   {
     id: "s-gifts",
@@ -131,6 +150,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#647A93", "#374C5F"],
     emoji: "🎁",
     zone: "Lobby · L1",
+    lat: 21.4204,
+    lng: 39.8245,
   },
   {
     id: "s-spa",
@@ -144,6 +165,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#2F9577", "#3DAF8D"],
     emoji: "🧖‍♀️",
     zone: "Wellness Floor · L3",
+    lat: 21.4182,
+    lng: 39.8232,
   },
   {
     id: "s-tabby",
@@ -157,6 +180,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#475F76", "#374C5F"],
     emoji: "🕶️",
     zone: "Boulevard · L2",
+    lat: 21.4208,
+    lng: 39.8234,
   },
   {
     id: "s-concierge",
@@ -170,6 +195,8 @@ export const retailStores: RetailStore[] = [
     gradient: ["#3DAF8D", "#374C5F"],
     emoji: "🛎️",
     zone: "Lobby · L1",
+    lat: 21.4195,
+    lng: 39.8244,
   },
 ];
 

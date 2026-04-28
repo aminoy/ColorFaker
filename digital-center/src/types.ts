@@ -28,6 +28,8 @@ export interface Restaurant {
   gradient: [string, string];
   emoji: string;
   zone: string;
+  lat: number;
+  lng: number;
 }
 
 export interface RetailStore {
@@ -42,6 +44,8 @@ export interface RetailStore {
   gradient: [string, string];
   emoji: string;
   zone: string;
+  lat: number;
+  lng: number;
 }
 
 export interface MenuItem {

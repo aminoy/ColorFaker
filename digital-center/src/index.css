@@ -30,3 +30,77 @@
     scrollbar-width: none;
   }
 }
+
+/* Leaflet custom pins for the destination map */
+.jo-pin .jo-pin-wrap {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 6px 16px rgba(15, 23, 42, 0.35),
+    0 0 0 2px rgba(255, 255, 255, 0.7);
+  transition: transform 0.18s ease;
+}
+.jo-pin .jo-pin-inner {
+  display: grid;
+  place-items: center;
+  width: 78%;
+  height: 78%;
+  border-radius: 9999px;
+  font-size: 16px;
+  line-height: 1;
+}
+.jo-pin .jo-pin-active {
+  transform: scale(1.08);
+  box-shadow:
+    0 10px 30px rgba(61, 175, 141, 0.55),
+    0 0 0 3px #ffffff;
+}
+.jo-pin .jo-pin-active .jo-pin-inner {
+  font-size: 18px;
+}
+
+.jo-user-pin .jo-user-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+.jo-user-pin .jo-user-dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #3daf8d;
+  box-shadow:
+    0 0 0 3px #ffffff,
+    0 4px 10px rgba(61, 175, 141, 0.6);
+}
+.jo-user-pin .jo-user-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(61, 175, 141, 0.5);
+  animation: jo-pulse 1.6s ease-out infinite;
+}
+@keyframes jo-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* Tone the leaflet base container to match the app */
+.leaflet-container {
+  background: #1f2c39;
+  font-family: inherit;
+}
+.leaflet-control-attribution {
+  display: none !important;
+}
