@@ -45,12 +45,12 @@ export const RestaurantDetailScreen = () => {
             {restaurant.zone}
           </span>
         </div>
-        <div className="absolute bottom-6 left-5 right-5">
-          <span className="text-5xl">{restaurant.emoji}</span>
+        <div className="absolute bottom-20 left-5">
+          <span className="text-6xl drop-shadow-lg">{restaurant.emoji}</span>
         </div>
       </div>
 
-      <div className="relative z-10 -mt-12 px-5">
+      <div className="relative z-10 -mt-10 px-5">
         <div className="rounded-2xl bg-white p-4 shadow-card">
           <div className="flex items-start justify-between gap-3">
             <div>

@@ -34,10 +34,12 @@ export const StoreDetailScreen = () => {
             {store.zone}
           </span>
         </div>
-        <div className="absolute bottom-6 left-5 text-5xl">{store.emoji}</div>
+        <div className="absolute bottom-16 left-5">
+          <span className="text-6xl drop-shadow-lg">{store.emoji}</span>
+        </div>
       </div>
 
-      <section className="relative z-10 -mt-12 px-5">
+      <section className="relative z-10 -mt-10 px-5">
         <div className="rounded-2xl bg-white p-4 shadow-card">
           <div className="flex items-start justify-between gap-3">
             <div>
