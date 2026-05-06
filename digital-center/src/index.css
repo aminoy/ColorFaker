@@ -96,6 +96,24 @@
   }
 }
 
+.jo-start-pin .jo-start-wrap {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px #374c5f,
+    0 4px 8px rgba(15, 23, 42, 0.4);
+}
+.jo-start-pin .jo-start-wrap span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #374c5f;
+}
+
 /* Tone the leaflet base container to match the app */
 .leaflet-container {
   background: #1f2c39;

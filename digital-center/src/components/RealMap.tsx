@@ -1,27 +1,39 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Polyline,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import { JABAL_OMAR_CENTER } from "../data/mockData";
-import type { AnyStore } from "../types";
+import type { Point } from "../data/wayfinding";
+import type { AnyStore, DestinationPlace } from "../types";
+
+export type MapPin = AnyStore | DestinationPlace;
 
 interface RealMapProps {
-  stores: AnyStore[];
+  pins: MapPin[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-  userPosition: { lat: number; lng: number } | null;
+  userPosition: Point | null;
+  routePath?: Point[] | null;
+  routeStart?: Point | null;
+  flyTo?: Point | null;
 }
 
-const buildStoreIcon = (store: AnyStore, active: boolean): L.DivIcon => {
-  const c1 = store.gradient[0];
-  const c2 = store.gradient[1];
+const buildPinIcon = (pin: MapPin, active: boolean): L.DivIcon => {
+  const c1 = pin.gradient[0];
+  const c2 = pin.gradient[1];
   const size = active ? 44 : 36;
   return L.divIcon({
     className: "jo-pin",
     html: `
       <div class="jo-pin-wrap${active ? " jo-pin-active" : ""}" style="width:${size}px;height:${size}px;">
         <div class="jo-pin-inner" style="background:linear-gradient(135deg,${c1} 0%,${c2} 100%)">
-          <span>${store.emoji}</span>
+          <span>${pin.emoji}</span>
         </div>
       </div>
     `,
@@ -42,6 +54,13 @@ const userIcon: L.DivIcon = L.divIcon({
   iconAnchor: [11, 11],
 });
 
+const startIcon: L.DivIcon = L.divIcon({
+  className: "jo-start-pin",
+  html: `<div class="jo-start-wrap"><span></span></div>`,
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+});
+
 const Recenter = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
   useEffect(() => {
@@ -59,10 +78,21 @@ const FixViewport = () => {
   return null;
 };
 
-const distanceMeters = (
-  a: { lat: number; lng: number },
-  b: { lat: number; lng: number },
-): number => {
+const FitRoute = ({ path }: { path: Point[] }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (path.length < 2) return;
+    const bounds = L.latLngBounds(path.map((p) => [p.lat, p.lng]));
+    map.flyToBounds(bounds, {
+      padding: [80, 80],
+      duration: 0.8,
+      maxZoom: 18,
+    });
+  }, [path, map]);
+  return null;
+};
+
+const distanceMeters = (a: Point, b: Point): number => {
   const R = 6371000;
   const toRad = (x: number) => (x * Math.PI) / 180;
   const dLat = toRad(b.lat - a.lat);
@@ -76,24 +106,24 @@ const distanceMeters = (
 };
 
 export const RealMap = ({
-  stores,
+  pins,
   selectedId,
   onSelect,
   userPosition,
+  routePath,
+  routeStart,
+  flyTo,
 }: RealMapProps) => {
   const center: [number, number] = [
     JABAL_OMAR_CENTER.lat,
     JABAL_OMAR_CENTER.lng,
   ];
 
-  // Show user marker only if reasonably close to the destination (< 5 km).
   const showUser =
     !!userPosition && distanceMeters(JABAL_OMAR_CENTER, userPosition) < 5000;
 
-  const selected = stores.find((s) => s.id === selectedId);
-  const flyTarget = selected
-    ? { lat: selected.lat, lng: selected.lng }
-    : JABAL_OMAR_CENTER;
+  const flyTarget = flyTo || JABAL_OMAR_CENTER;
+  const hasRoute = !!routePath && routePath.length >= 2;
 
   return (
     <div className="absolute inset-0 bg-midnight-700">
@@ -112,16 +142,51 @@ export const RealMap = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
         <FixViewport />
-        <Recenter lat={flyTarget.lat} lng={flyTarget.lng} />
+        {hasRoute ? (
+          <FitRoute path={routePath!} />
+        ) : (
+          <Recenter lat={flyTarget.lat} lng={flyTarget.lng} />
+        )}
 
-        {stores.map((s) => (
+        {hasRoute && (
+          <>
+            <Polyline
+              positions={routePath!.map((p) => [p.lat, p.lng])}
+              pathOptions={{
+                color: "#3DAF8D",
+                weight: 6,
+                opacity: 0.95,
+                lineCap: "round",
+                lineJoin: "round",
+                dashArray: "1, 14",
+              }}
+            />
+            <Polyline
+              positions={routePath!.map((p) => [p.lat, p.lng])}
+              pathOptions={{
+                color: "#3DAF8D",
+                weight: 14,
+                opacity: 0.18,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
+            />
+            {routeStart && (
+              <Marker
+                position={[routeStart.lat, routeStart.lng]}
+                icon={startIcon}
+                interactive={false}
+              />
+            )}
+          </>
+        )}
+
+        {pins.map((p) => (
           <Marker
-            key={s.id}
-            position={[s.lat, s.lng]}
-            icon={buildStoreIcon(s, s.id === selectedId)}
-            eventHandlers={{
-              click: () => onSelect(s.id),
-            }}
+            key={p.id}
+            position={[p.lat, p.lng]}
+            icon={buildPinIcon(p, p.id === selectedId)}
+            eventHandlers={{ click: () => onSelect(p.id) }}
           />
         ))}
 
@@ -134,7 +199,6 @@ export const RealMap = ({
         )}
       </MapContainer>
 
-      {/* Tiny attribution chip — required by tile provider terms */}
       <a
         href="https://www.openstreetmap.org/copyright"
         target="_blank"

@@ -85,3 +85,29 @@ export interface Order {
 }
 
 export type AnyStore = Restaurant | RetailStore;
+
+export type PlaceCategory =
+  | "hotel"
+  | "hall"
+  | "mosque"
+  | "parking"
+  | "service";
+
+export interface DestinationPlace {
+  id: string;
+  name: string;
+  nameAr?: string;
+  category: PlaceCategory;
+  description: string;
+  descriptionAr?: string;
+  zone: string;
+  lat: number;
+  lng: number;
+  emoji: string;
+  gradient: [string, string];
+}
+
+export type Routable =
+  | (Restaurant & { kind: "restaurant" })
+  | (RetailStore & { kind: "retail" })
+  | (DestinationPlace & { kind: "place" });
