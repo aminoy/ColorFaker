@@ -68,7 +68,7 @@ const distanceMeters = (a: Point, b: Point): number => {
 
 export const MapScreen = () => {
   const { navigate, selectStore, selectRestaurant, language } = useApp();
-  const [selectedId, setSelectedId] = useState<string | null>("r-saffron");
+  const [selectedId, setSelectedId] = useState<string | null>("r-najd");
   const [layer, setLayer] = useState<Layer>("all");
   const [geo, setGeo] = useState<GeoState>({ status: "idle" });
   const [routeToId, setRouteToId] = useState<string | null>(null);

@@ -138,7 +138,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const placeOrder = useCallback(() => {
     setOrder({
       id: `JO-${Math.floor(100000 + Math.random() * 900000)}`,
-      storeName: "Saffron & Cedar",
+      storeName: "Najd Village",
       status: "received",
       etaMinutes: 12,
       placedAt: Date.now(),

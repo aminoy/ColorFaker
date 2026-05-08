@@ -126,7 +126,7 @@ export const RealMap = ({
   const hasRoute = !!routePath && routePath.length >= 2;
 
   return (
-    <div className="absolute inset-0 bg-midnight-700">
+    <div className="absolute inset-0 bg-[#e6ecf2]">
       <MapContainer
         center={center}
         zoom={17}
@@ -136,7 +136,7 @@ export const RealMap = ({
         className="absolute inset-0 h-full w-full"
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           subdomains={["a", "b", "c", "d"]}
           maxZoom={20}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · &copy; <a href="https://carto.com/attributions">CARTO</a>'

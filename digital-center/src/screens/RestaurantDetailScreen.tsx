@@ -10,7 +10,7 @@ export const RestaurantDetailScreen = () => {
   const { selectedRestaurantId, navigate, language } = useApp();
   const restaurant =
     restaurants.find((r) => r.id === selectedRestaurantId) || restaurants[0];
-  const menu = restaurantMenus[restaurant.id] || restaurantMenus["r-saffron"];
+  const menu = restaurantMenus[restaurant.id] || restaurantMenus["r-najd"];
 
   const categories = useMemo(() => {
     return Array.from(new Set(menu.map((m) => m.category)));
