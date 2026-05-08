@@ -45,7 +45,7 @@ export const RestaurantDetailScreen = () => {
             {restaurant.zone}
           </span>
         </div>
-        <div className="absolute bottom-20 left-5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-14 flex justify-center">
           <span className="text-6xl drop-shadow-lg">{restaurant.emoji}</span>
         </div>
       </div>

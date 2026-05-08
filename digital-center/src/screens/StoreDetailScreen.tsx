@@ -34,7 +34,7 @@ export const StoreDetailScreen = () => {
             {store.zone}
           </span>
         </div>
-        <div className="absolute bottom-16 left-5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-10 flex justify-center">
           <span className="text-6xl drop-shadow-lg">{store.emoji}</span>
         </div>
       </div>
