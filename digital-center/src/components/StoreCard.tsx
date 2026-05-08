@@ -54,7 +54,7 @@ export const StoreCard = ({
         whileTap={{ scale: 0.97 }}
         onClick={onClick}
         type="button"
-        className="flex w-[220px] shrink-0 flex-col gap-3 overflow-hidden rounded-2xl bg-white p-3 text-left shadow-card"
+        className="flex w-[220px] shrink-0 flex-col gap-3 overflow-hidden rounded-2xl bg-white p-3 text-start shadow-card"
       >
         <div
           className="relative flex h-28 w-full items-end justify-between overflow-hidden rounded-xl p-3 text-white"
@@ -105,7 +105,7 @@ export const StoreCard = ({
         whileTap={{ scale: 0.98 }}
         onClick={onClick}
         type="button"
-        className="flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left shadow-soft"
+        className="flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-start shadow-soft"
       >
         <div
           className="grid h-14 w-14 place-items-center rounded-xl text-2xl text-white"
@@ -142,7 +142,7 @@ export const StoreCard = ({
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       type="button"
-      className="flex w-full flex-col gap-3 overflow-hidden rounded-2xl bg-white p-3 text-left shadow-card"
+      className="flex w-full flex-col gap-3 overflow-hidden rounded-2xl bg-white p-3 text-start shadow-card"
     >
       <div
         className="relative flex h-32 w-full items-end justify-between overflow-hidden rounded-xl p-3 text-white"

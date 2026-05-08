@@ -12,7 +12,7 @@ export const OfferCard = ({ offer, onClick }: OfferCardProps) => {
       type="button"
       onClick={onClick}
       whileTap={{ scale: 0.97 }}
-      className="relative flex w-[260px] shrink-0 items-center gap-3 overflow-hidden rounded-2xl p-4 text-left text-white shadow-card"
+      className="relative flex w-[260px] shrink-0 items-center gap-3 overflow-hidden rounded-2xl p-4 text-start text-white shadow-card"
       style={{
         background: `linear-gradient(135deg, ${offer.gradient[0]} 0%, ${offer.gradient[1]} 100%)`,
       }}

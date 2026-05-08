@@ -22,7 +22,7 @@ export const QuickActionCard = ({
       onClick={onClick}
       whileTap={{ scale: 0.96 }}
       whileHover={{ y: -2 }}
-      className="group relative flex flex-1 flex-col items-start gap-3 overflow-hidden rounded-2xl p-4 text-left text-white shadow-card"
+      className="group relative flex flex-1 flex-col items-start gap-3 overflow-hidden rounded-2xl p-4 text-start text-white shadow-card"
       style={{
         background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
       }}

@@ -122,12 +122,14 @@ const Row = ({
   onClick?: () => void;
   tone?: "danger";
   rightHint?: boolean;
-}) => (
+}) => {
+  const { language } = useApp();
+  return (
   <motion.button
     whileTap={{ scale: 0.985 }}
     type="button"
     onClick={onClick}
-    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition hover:bg-cloud ${
+    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-start transition hover:bg-cloud ${
       tone === "danger" ? "text-red-500" : "text-midnight-700"
     }`}
   >
@@ -145,7 +147,13 @@ const Row = ({
       </span>
     )}
     {!value && (
-      <ChevronRight size={16} className={rightHint ? "opacity-60" : ""} />
+      <ChevronRight
+        size={16}
+        className={`${rightHint ? "opacity-60" : ""} ${
+          language === "ar" ? "rotate-180" : ""
+        }`}
+      />
     )}
   </motion.button>
-);
+  );
+};

@@ -97,7 +97,7 @@ export const OrderTrackingScreen = () => {
                 </p>
                 <p className="text-sm font-semibold">{order.storeName}</p>
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 <p className="text-[11px] text-white/65">
                   {language === "ar" ? "رقم الطلب" : "Order ID"}
                 </p>

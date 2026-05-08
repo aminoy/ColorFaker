@@ -133,7 +133,7 @@ export const CartScreen = () => {
                     key={o.id}
                     type="button"
                     onClick={() => setFulfilment(o.id)}
-                    className={`flex flex-col items-start gap-0.5 rounded-2xl p-3 text-left transition ${
+                    className={`flex flex-col items-start gap-0.5 rounded-2xl p-3 text-start transition ${
                       active
                         ? "bg-midnight-700 text-white shadow-card"
                         : "bg-white text-midnight-700 shadow-soft"
@@ -225,7 +225,7 @@ const PaymentOption = ({
     whileTap={{ scale: 0.96 }}
     type="button"
     onClick={onClick}
-    className={`flex items-center gap-2 rounded-2xl p-3 text-left transition ${
+    className={`flex items-center gap-2 rounded-2xl p-3 text-start transition ${
       active
         ? "bg-midnight-700 text-white shadow-card"
         : "bg-white text-midnight-700 shadow-soft"
