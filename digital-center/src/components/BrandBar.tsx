@@ -23,7 +23,7 @@ export const BrandBar = ({ variant = "solid" }: BrandBarProps) => {
   return (
     <header
       role="banner"
-      className={`absolute inset-x-0 top-0 z-[600] flex items-center justify-center px-5 pt-3 pb-2 text-white ${bg}`}
+      className={`absolute inset-x-0 top-0 z-[600] flex items-center justify-start px-5 pt-3 pb-2 text-white ${bg}`}
       style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
     >
       <BrandLogo

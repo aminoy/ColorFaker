@@ -17,7 +17,11 @@ export const SplashScreen = () => {
         className="relative z-10 flex flex-col items-center"
       >
         <div className="grid h-24 w-24 place-items-center rounded-3xl bg-white/10 ring-1 ring-white/20 backdrop-blur shadow-glow">
-          <BrandLogo size={56} className="text-white drop-shadow" />
+          <BrandLogo
+            src="/jodna-logo-icon.png"
+            size={56}
+            className="text-white drop-shadow"
+          />
         </div>
         <h1 className="mt-6 text-3xl font-semibold tracking-[0.5em] text-white">
           JODNA
