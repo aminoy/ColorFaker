@@ -92,8 +92,8 @@ export const ProfileScreen = () => {
         />
       </section>
 
-      <p className="mx-5 mt-2 text-center text-[10px] uppercase tracking-widest text-midnight-400">
-        Jabal Omar · v0.1
+      <p className="mx-5 mt-2 text-center text-[10px] uppercase tracking-[0.4em] text-midnight-400">
+        JODNA · v0.1
       </p>
     </div>
   );

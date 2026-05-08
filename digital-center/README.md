@@ -1,6 +1,6 @@
-# Jabal Omar · Digital Center
+# JODNA · Jabal Omar Digital Center
 
-A premium, mobile-first frontend for **Jabal Omar Digital Center** — the smart destination operating system for the Jabal Omar mixed-use destination. Designed to feel like a digital concierge (not a generic mall directory): order food, shop, explore, navigate, and track orders inside the destination.
+A premium, mobile-first frontend for **JODNA**, the smart destination operating system for Jabal Omar. Designed to feel like a digital concierge (not a generic mall directory): order food, shop, explore, navigate, and track orders inside the destination.
 
 Built with **React + TypeScript + Tailwind CSS + Framer Motion + Lucide React**, fully runnable with mock data, optimized for a 390 px viewport, and ready for English / Arabic (RTL).
 

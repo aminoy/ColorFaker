@@ -29,7 +29,7 @@ export const RestaurantDetailScreen = () => {
       >
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
         <div className="absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-black/20 blur-2xl" />
-        <div className="relative flex items-center justify-between px-5 pt-12">
+        <div className="relative flex items-center justify-between px-5 pt-16">
           <motion.button
             whileTap={{ scale: 0.92 }}
             onClick={() => navigate("food")}

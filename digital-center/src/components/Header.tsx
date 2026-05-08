@@ -32,7 +32,7 @@ export const Header = ({
 
   if (variant === "page") {
     return (
-      <header className="bg-cloud px-5 pt-12 pb-3 sticky top-0 z-20">
+      <header className="bg-cloud px-5 pt-16 pb-3 sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <motion.button
             whileTap={{ scale: 0.92 }}
@@ -59,7 +59,7 @@ export const Header = ({
   }
 
   return (
-    <header className="relative overflow-hidden rounded-b-[2rem] bg-midnight-gradient px-5 pt-12 pb-7 text-white">
+    <header className="relative overflow-hidden rounded-b-[2rem] bg-midnight-gradient px-5 pt-16 pb-7 text-white">
       <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald2/30 blur-3xl" />
       <div className="absolute -left-12 bottom-0 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
       <div className="relative flex items-start justify-between">

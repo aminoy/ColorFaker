@@ -18,7 +18,7 @@ export const StoreDetailScreen = () => {
       >
         <div className="absolute -right-12 -top-10 h-44 w-44 rounded-full bg-white/15 blur-3xl" />
         <div className="absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-black/25 blur-2xl" />
-        <div className="relative flex items-center justify-between px-5 pt-12">
+        <div className="relative flex items-center justify-between px-5 pt-16">
           <motion.button
             whileTap={{ scale: 0.92 }}
             onClick={() => navigate("retail")}

@@ -185,7 +185,7 @@ export const MapScreen = () => {
         flyTo={selected ? { lat: selected.lat, lng: selected.lng } : null}
       />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-5 pt-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] px-5 pt-16">
         <div className="pointer-events-auto flex items-center justify-between gap-2">
           <button
             type="button"

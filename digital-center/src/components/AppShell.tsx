@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useApp } from "../context/AppContext";
 import { BottomNav } from "./BottomNav";
+import { BrandBar } from "./BrandBar";
 
 interface AppShellProps {
   children: ReactNode;
@@ -8,7 +9,8 @@ interface AppShellProps {
 
 export const AppShell = ({ children }: AppShellProps) => {
   const { screen, dir } = useApp();
-  const showNav = screen !== "splash";
+  const isSplash = screen === "splash";
+  const isMap = screen === "map";
 
   return (
     <div
@@ -16,9 +18,10 @@ export const AppShell = ({ children }: AppShellProps) => {
       className="min-h-screen w-full bg-slate-200 text-ink antialiased"
       style={{ fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-cloud shadow-lift relative overflow-hidden">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-cloud shadow-lift">
+        {!isSplash && <BrandBar variant={isMap ? "transparent" : "solid"} />}
         <main className="flex-1 overflow-y-auto pb-28">{children}</main>
-        {showNav && <BottomNav />}
+        {!isSplash && <BottomNav />}
       </div>
     </div>
   );

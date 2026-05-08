@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { BrandLogo } from "../components/BrandLogo";
 import { useApp } from "../context/AppContext";
 
 export const SplashScreen = () => {
@@ -16,16 +17,14 @@ export const SplashScreen = () => {
         className="relative z-10 flex flex-col items-center"
       >
         <div className="grid h-24 w-24 place-items-center rounded-3xl bg-white/10 ring-1 ring-white/20 backdrop-blur shadow-glow">
-          <div className="grid h-16 w-16 place-items-center rounded-2xl bg-emerald-gradient text-2xl font-bold tracking-tight">
-            JO
-          </div>
+          <BrandLogo size={56} className="text-white drop-shadow" />
         </div>
-        <p className="mt-6 text-xs uppercase tracking-[0.4em] text-white/60">
-          Jabal Omar
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          {language === "ar" ? "المركز الرقمي" : "Digital Center"}
+        <h1 className="mt-6 text-3xl font-semibold tracking-[0.5em] text-white">
+          JODNA
         </h1>
+        <p className="mt-1 text-xs uppercase tracking-[0.4em] text-white/60">
+          {language === "ar" ? "وجهة جبل عمر" : "Jabal Omar Destination"}
+        </p>
         <p className="mt-2 max-w-[260px] text-center text-xs text-white/65">
           {language === "ar"
             ? "وجهتك الذكية لكل ما يحدث داخل جبل عمر"
