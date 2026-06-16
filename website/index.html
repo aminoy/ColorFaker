@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1b3d" />
+  <title>المدى القريب | متجر الجوالات والإكسسوارات الذكية</title>
+  <meta name="description" content="المدى القريب - متجرك الأول للجوالات الذكية والإكسسوارات في السعودية. شحن مجاني، تقسيط عبر تابي وتمارا، ودعم على مدار الساعة." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Announcement bar -->
+  <div class="announce">
+    <div class="container announce__inner">
+      <p class="announce__item"><span class="dot"></span> شحن مجاني لجميع مناطق المملكة على الطلبات فوق ٢٠٠ ريال</p>
+      <p class="announce__item announce__item--hide">قسّم مشترياتك على ٤ دفعات مع تابي و تمارا بدون فوائد</p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <button class="icon-btn header__menu" id="menuToggle" aria-label="القائمة">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <a class="logo" href="#" aria-label="المدى القريب">
+        <span class="logo__mark">م</span>
+        <span class="logo__text">المدى <strong>القريب</strong></span>
+      </a>
+
+      <form class="search" role="search" onsubmit="return false">
+        <svg class="search__icon" viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" placeholder="ابحث عن جوال، سماعة، شاحن..." aria-label="بحث" />
+        <button type="submit" class="search__btn">بحث</button>
+      </form>
+
+      <div class="header__actions">
+        <a href="#" class="icon-btn icon-btn--label" aria-label="حسابي">
+          <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>حسابي</span>
+        </a>
+        <a href="#" class="icon-btn icon-btn--label" aria-label="المفضلة">
+          <span class="icon-btn__badge">3</span>
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 21s-7-4.6-9.3-9C1 8.7 2.7 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.3 0 5 3.2 3.3 6.5C19 16.4 12 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <span>المفضلة</span>
+        </a>
+        <button class="icon-btn icon-btn--label" id="cartToggle" aria-label="السلة">
+          <span class="icon-btn__badge" id="cartCount">0</span>
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/></svg>
+          <span>السلة</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Primary nav -->
+    <nav class="nav" id="primaryNav">
+      <div class="container nav__inner">
+        <a href="#" class="nav__link nav__link--all">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          كل الأقسام
+        </a>
+        <a href="#" class="nav__link">الجوالات</a>
+        <a href="#" class="nav__link">السماعات والمكبرات</a>
+        <a href="#" class="nav__link">الشواحن</a>
+        <a href="#" class="nav__link">الحماية والكفرات</a>
+        <a href="#" class="nav__link">الأجهزة الذكية</a>
+        <a href="#" class="nav__link nav__link--offer">العروض 🔥</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile menu backdrop -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Mobile drawer -->
+  <aside class="drawer" id="mobileDrawer" aria-hidden="true">
+    <div class="drawer__head">
+      <span class="logo__text">القائمة</span>
+      <button class="icon-btn" id="drawerClose" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="drawer__nav">
+      <a href="#">الجوالات</a>
+      <a href="#">السماعات والمكبرات</a>
+      <a href="#">الشواحن</a>
+      <a href="#">الحماية والكفرات</a>
+      <a href="#">الأجهزة الذكية</a>
+      <a href="#" class="drawer__offer">العروض 🔥</a>
+      <hr />
+      <a href="#">حسابي</a>
+      <a href="#">المفضلة</a>
+      <a href="#">تواصل معنا</a>
+    </nav>
+  </aside>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__copy">
+          <span class="hero__eyebrow">إصدار ٢٠٢٦ متوفر الآن</span>
+          <h1 class="hero__title">أحدث الجوالات الذكية<br /><span>بين يديك بسهولة</span></h1>
+          <p class="hero__sub">تشكيلة واسعة من أبل، سامسونج، شاومي وأونر بأفضل الأسعار، مع تقسيط مريح وشحن سريع لباب منزلك.</p>
+          <div class="hero__cta">
+            <a href="#products" class="btn btn--primary">تسوّق الآن</a>
+            <a href="#brands" class="btn btn--ghost">تصفح الماركات</a>
+          </div>
+          <ul class="hero__stats">
+            <li><strong>+٥٠ ألف</strong><span>عميل سعيد</span></li>
+            <li><strong>+١٢٠٠</strong><span>منتج أصلي</span></li>
+            <li><strong>٤.٩</strong><span>تقييم العملاء</span></li>
+          </ul>
+        </div>
+        <div class="hero__visual">
+          <div class="hero__card hero__card--main">
+            <span class="badge badge--accent">الأكثر مبيعاً</span>
+            <div class="device"></div>
+            <div class="hero__card-info">
+              <h3>سلسلة الجوالات الرائدة</h3>
+              <p>أداء فائق وكاميرا احترافية</p>
+            </div>
+          </div>
+          <div class="hero__card hero__card--float hero__card--top">
+            <span class="float__emoji">🎧</span>
+            <div><strong>سماعات لاسلكية</strong><small>عزل ضوضاء فعّال</small></div>
+          </div>
+          <div class="hero__card hero__card--float hero__card--bottom">
+            <span class="float__emoji">⚡</span>
+            <div><strong>شحن سريع</strong><small>حتى ١٢٠ واط</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature / trust strip -->
+    <section class="features">
+      <div class="container features__grid">
+        <div class="feature">
+          <div class="feature__icon">🚚</div>
+          <div><h4>شحن مجاني</h4><p>لجميع مناطق المملكة</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">💳</div>
+          <div><h4>قسّط مشترياتك</h4><p>تابي و تمارا بدون فوائد</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🛡️</div>
+          <div><h4>منتجات أصلية</h4><p>ضمان وكيل معتمد</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🕐</div>
+          <div><h4>دعم ٢٤/٧</h4><p>خدمة عملاء على مدار الساعة</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brands -->
+    <section class="section" id="brands">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section__title">تسوّق حسب الماركة</h2>
+          <a href="#" class="section__more">عرض الكل ←</a>
+        </div>
+        <div class="brands">
+          <a href="#" class="brand">Apple</a>
+          <a href="#" class="brand">SAMSUNG</a>
+          <a href="#" class="brand">Xiaomi</a>
+          <a href="#" class="brand">HONOR</a>
+          <a href="#" class="brand">OPPO</a>
+          <a href="#" class="brand">OUKITEL</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section section--tint">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section__title">تصفّح الأقسام</h2>
+        </div>
+        <div class="categories">
+          <a href="#" class="cat">
+            <span class="cat__emoji">📱</span>
+            <h4>الجوالات الذكية</h4>
+            <p>أحدث الموديلات</p>
+          </a>
+          <a href="#" class="cat">
+            <span class="cat__emoji">🎧</span>
+            <h4>السماعات والمكبرات</h4>
+            <p>صوت نقي</p>
+          </a>
+          <a href="#" class="cat">
+            <span class="cat__emoji">🔌</span>
+            <h4>الشواحن والكوابل</h4>
+            <p>شحن آمن وسريع</p>
+          </a>
+          <a href="#" class="cat">
+            <span class="cat__emoji">🛡️</span>
+            <h4>الحماية والكفرات</h4>
+            <p>لشاشتك وجهازك</p>
+          </a>
+          <a href="#" class="cat">
+            <span class="cat__emoji">⌚</span>
+            <h4>الأجهزة الذكية</h4>
+            <p>ساعات وأكسسوارات</p>
+          </a>
+          <a href="#" class="cat">
+            <span class="cat__emoji">🔧</span>
+            <h4>خدمة الصيانة</h4>
+            <p>إصلاح احترافي</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="section" id="products">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section__title">منتجات مختارة</h2>
+          <div class="tabs" id="tabs">
+            <button class="tab is-active" data-tab="new">وصل حديثاً</button>
+            <button class="tab" data-tab="best">الأكثر مبيعاً</button>
+            <button class="tab" data-tab="offers">عروض</button>
+          </div>
+        </div>
+        <div class="products" id="productGrid"></div>
+      </div>
+    </section>
+
+    <!-- Installment promo banner -->
+    <section class="container">
+      <div class="promo">
+        <div class="promo__copy">
+          <span class="promo__tag">طريقة دفع مرنة</span>
+          <h2>قسّط طلبك على ٤ دفعات<br />بدون أي فوائد</h2>
+          <p>اختر تابي أو تمارا عند الدفع واستلم منتجك فوراً، وادفع على راحتك.</p>
+          <div class="promo__pays">
+            <span class="paychip">tabby</span>
+            <span class="paychip">tamara</span>
+          </div>
+        </div>
+        <div class="promo__art">
+          <div class="promo__circle">٤<small>دفعات</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section__title">آراء عملائنا</h2>
+        </div>
+        <div class="reviews">
+          <figure class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>تجربة شراء ممتازة، المنتج أصلي ووصل بسرعة. خدمة العملاء متعاونة جداً.</blockquote>
+            <figcaption><span class="avatar">أ</span> أحمد العتيبي</figcaption>
+          </figure>
+          <figure class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>أسعار منافسة وخيار التقسيط سهّل علي كثير. أنصح فيه بقوة.</blockquote>
+            <figcaption><span class="avatar">ن</span> نورة الحربي</figcaption>
+          </figure>
+          <figure class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>أفضل متجر للجوالات والإكسسوارات في جدة، والتعامل راقي والشحن مجاني.</blockquote>
+            <figcaption><span class="avatar">م</span> محمد الزهراني</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="container">
+      <div class="newsletter">
+        <div>
+          <h2>اشترك ليصلك جديد العروض</h2>
+          <p>كن أول من يعرف عن المنتجات والتخفيضات الحصرية.</p>
+        </div>
+        <form class="newsletter__form" onsubmit="return false">
+          <input type="email" placeholder="بريدك الإلكتروني" aria-label="البريد الإلكتروني" required />
+          <button class="btn btn--primary" type="submit">اشترك</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__col footer__brand">
+        <a class="logo logo--light" href="#">
+          <span class="logo__mark">م</span>
+          <span class="logo__text">المدى <strong>القريب</strong></span>
+        </a>
+        <p>متجرك الأول للجوالات الذكية والإكسسوارات الأصلية في المملكة العربية السعودية.</p>
+        <div class="socials">
+          <a href="#" aria-label="واتساب" class="social">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M.1 24l1.7-6.1A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.5L.1 24zM6.6 20l.4.2a9.9 9.9 0 1 0-3.4-3.4l.2.4-1 3.7 3.8-.9zM18 14.4c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.7 1c-.1.2-.3.2-.5.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.4.1-.5l.4-.5.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.1s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.5-.3z"/></svg>
+          </a>
+          <a href="#" aria-label="يوتيوب" class="social">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M23 7.5a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 0 0 1 7.5 31 31 0 0 0 .6 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-4.5 31 31 0 0 0-.4-4.5zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg>
+          </a>
+          <a href="#" aria-label="انستغرام" class="social">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer__col">
+        <h4>روابط سريعة</h4>
+        <a href="#">من نحن</a>
+        <a href="#">العروض</a>
+        <a href="#">سياسة الاسترجاع</a>
+        <a href="#">الأسئلة الشائعة</a>
+      </div>
+      <div class="footer__col">
+        <h4>الأقسام</h4>
+        <a href="#">الجوالات</a>
+        <a href="#">السماعات</a>
+        <a href="#">الشواحن</a>
+        <a href="#">الحماية والكفرات</a>
+      </div>
+      <div class="footer__col">
+        <h4>تواصل معنا</h4>
+        <p class="footer__contact">📍 جدة، حي الشرفية، شارع فلسطين، سوق الأمير</p>
+        <p class="footer__contact">💬 خدمة العملاء عبر واتساب</p>
+        <div class="paymethods">
+          <span>mada</span><span>VISA</span><span>tabby</span><span>tamara</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bar">
+      <div class="container footer__bar-inner">
+        <p>© ٢٠٢٦ المدى القريب — جميع الحقوق محفوظة</p>
+        <p>صُمّم بعناية لتجربة تسوّق أفضل</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart drawer -->
+  <aside class="cart" id="cartDrawer" aria-hidden="true">
+    <div class="cart__head">
+      <h3>سلة التسوّق</h3>
+      <button class="icon-btn" id="cartClose" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="cart__body" id="cartBody">
+      <div class="cart__empty">
+        <span>🛒</span>
+        <p>سلتك فارغة حالياً</p>
+      </div>
+    </div>
+    <div class="cart__foot">
+      <div class="cart__total"><span>الإجمالي</span><strong id="cartTotal">٠ ر.س</strong></div>
+      <button class="btn btn--primary btn--block">إتمام الطلب</button>
+    </div>
+  </aside>
+
+  <!-- Floating WhatsApp -->
+  <a href="#" class="whatsapp" aria-label="تواصل عبر واتساب">
+    <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M.1 24l1.7-6.1A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.5L.1 24zM18 14.4c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.7 1c-.1.2-.3.2-.5.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.4.1-.5l.4-.5.2-.4v-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.1s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.5-.3z"/></svg>
+  </a>
+
+  <!-- Mobile bottom nav -->
+  <nav class="botnav">
+    <a href="#" class="botnav__item is-active"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg><span>الرئيسية</span></a>
+    <a href="#" class="botnav__item"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>الأقسام</span></a>
+    <button class="botnav__item" data-open-cart><svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>السلة</span></button>
+    <a href="#" class="botnav__item"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>حسابي</span></a>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>
